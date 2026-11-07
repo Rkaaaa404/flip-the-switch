@@ -1,0 +1,186 @@
+[00:00:02] Hai, kami Tuna Rasa, platform pelayanan
+[00:00:05] publik bagi penyandang disabilitas
+[00:00:06] pendengaran dengan memberikan informasi
+[00:00:09] yang akurat bagi masyarakat tanpa
+[00:00:11] ketimpangan demi mewujudkan konsep smart
+[00:00:13] city yang sesungguhnya. Dan aku Adil
+[00:00:15] Sultan sebagai ketua tunang resep.
+[00:00:19] Hai, aku IGO. Tahukah kalian? Konsep
+[00:00:22] smart city sejalan dengan SDGS PO 10 dan
+[00:00:24] 16 yang mendorong kesetaraan dan
+[00:00:26] keadilan termasuk bagi penyandang
+[00:00:29] disabilitas.
+[00:00:30] Sayangnya di Indonesia dari 0,4%
+[00:00:33] penduduk yang mengalami disabilitas
+[00:00:34] pendengaran, hanya 4,1% yang menggunakan
+[00:00:37] alat bantu dengar. Ini memicu
+[00:00:40] kesenjangan komunikasi khususnya di
+[00:00:42] ruang publik. Untuk itu kami
+[00:00:44] menghadirkan Tuna Rasa, platform yang
+[00:00:46] membantu penyandang disabilitas untuk
+[00:00:48] bisa berkomunikasi secara setara di
+[00:00:50] ruang publik. Tunarasa bertujuan untuk
+[00:00:53] menciptakan kota yang inklusif dengan
+[00:00:55] mengatasi hambatan komunikasi melalui
+[00:00:57] teknologi.
+[00:00:59] Kami menggabungkan computer vision untuk
+[00:01:00] menerjemahkan bahasa isyarat dan large
+[00:01:03] language model untuk memastikan
+[00:01:05] hasilnya tetap akurat dan natural.
+[00:01:09] Manfaatnya platform ini memberikan
+[00:01:10] kemudahan akses komunikasi, meningkatkan
+[00:01:12] kesadaran masyarakat akan pentingnya
+[00:01:14] inklusivitas dan membantu pemerintah
+[00:01:16] memberikan pelayanan publik yang lebih
+[00:01:18] terbuka dan adil. Dengan begitu, Tuna
+[00:01:20] rasa ikut mendukung tercapainya konsep
+[00:01:23] smart city yang lebih baik dan
+[00:01:25] berkelanjutan.
+[00:01:27] Hai, aku Dimas. Kalian semua tahu enggak
+[00:01:29] kalau semua tahapan ini dimulai dengan
+[00:01:32] studi literatur? Kemudian kita dapat
+[00:01:34] memulai proses perancangan sistem dan
+[00:01:37] juga desain interface. Setelah proses
+[00:01:39] perancangan selesai, kita dapat
+[00:01:41] membangun back yang tersambung dengan
+[00:01:43] model AI dan juga terintegrasi dengan
+[00:01:46] front end melalui sistem docker. Sistem
+[00:01:49] ini melalui pengujian terlebih dahulu
+[00:01:51] sebelum tunarasa dipublikasi.
+[00:01:54] Tunarasa menggunakan teknologi canggih
+[00:01:57] sebagai pondasi aplikasi di antaranya
+[00:02:00] computer vision, large language model,
+[00:02:02] speed recognition dan juga content based
+[00:02:05] recommendation system. Plform ini
+[00:02:07] memiliki tiga aktor utama, yakni
+[00:02:10] pengguna yang dapat menunjukkan gestur
+[00:02:13] tangan sebagai basis syarat dan juga
+[00:02:15] pesan suara yang kemudian diterjemahkan
+[00:02:17] oleh sistem dan mendapatkan jawaban baik
+[00:02:20] dari bot maupun dari admin. Sedangkan
+[00:02:23] admin dapat menugaskan bot untuk
+[00:02:25] mengontrol penuh komunikasi maupun
+[00:02:28] jawaban melalui evaluasinya terlebih
+[00:02:30] dahulu.
+[00:02:32] Berbeda dengan sur admin. Super admin
+[00:02:34] memiliki kontrol penuh terhadap sistem
+[00:02:36] dan juga admin. Bahkan admin dapat
+[00:02:39] mengupload data baru untuk memperkaya
+[00:02:43] pemahaman AI.
+[00:02:46] Tunaasa diawali dengan saat pengguna
+[00:02:49] memberikan gestur tangan maupun pesan
+[00:02:51] suara yang diterjemahkan oleh sistem dan
+[00:02:54] untuk menginisiasi conversation dan juga
+[00:02:56] disimpan pada message.
+[00:02:59] Semua jawaban dari AI termasuk dengan
+[00:03:01] akurasi akan disimpan pada tabel QOP.
+[00:03:05] Setelah percakapan selesai, kita dapat
+[00:03:07] mendapatkan rangkuman yang dapat diakses
+[00:03:10] melalui QR code dan dapat disimpan pada
+[00:03:14] tabel notes.
+[00:03:18] user yang memiliki role supraadmin
+[00:03:20] memiliki akses untuk mengupload file PDF
+[00:03:24] untuk sebagai data Rang system yang
+[00:03:27] tersimpan pada Rangi file dan tersambung
+[00:03:30] pada tabel institusi.
+[00:03:35] Tunarasa juga dilengkapi dengan sistem
+[00:03:37] base recommendation system.
+[00:03:39] Hal ini tersimpan pada blog aplikasi
+[00:03:43] Tunarasa menggunakan superabase sebagai
+[00:03:46] database dan autentikasi sebagai front
+[00:03:49] end serta face API sebagai back end.
+[00:03:51] Untuk gesture recognition tunarasa
+[00:03:53] menggunakan tensor flows dan media pipe.
+[00:03:56] Sistem RAG dan LM tunarasa ditenagai
+[00:03:59] oleh LCIN Elama dan Pinecon sebagai
+[00:04:02] vektor database. Semua proses tunarasa
+[00:04:05] telah dilengkapi oleh fitur monitoring
+[00:04:08] dengan menggunakan Grafana, Prometeus,
+[00:04:10] dan dipal untuk memantau sistem secara
+[00:04:13] keseluruhan.
+[00:04:15] Tun rasa menggabungkan computer vision
+[00:04:16] dan large language model untuk
+[00:04:18] komunikasi yang inklusif. Komputer
+[00:04:20] vision mendeteksi bahasa isyarat lalu
+[00:04:22] mengonversinya menjadi teks dengan
+[00:04:24] akurasi 78%. Lalu LLM menyempurnakan
+[00:04:27] teks agar lebih natural dan berfungsi
+[00:04:29] juga sebagai jetpot. Integrasi antara
+[00:04:32] keduanya meningkatkan akurasi terjemahan
+[00:04:34] menjadi 98%.
+[00:04:37] LM menunjukkan performa unggul dengan
+[00:04:39] skor kualitas 80% dan 86,5%
+[00:04:43] pas rate serta kemampuan menjawab
+[00:04:45] pertanyaan sebesar 82%.
+[00:04:48] Artinya LM mampu memahami konteks,
+[00:04:50] menjawab pertanyaan dengan tepat, dan
+[00:04:52] sangat layak untuk komunikasi inklusif.
+[00:04:55] Tunasa dibekali dengan content was
+[00:04:57] recommendation system berbasis tex
+[00:04:59] mining dengan menggunakan teknik
+[00:05:01] clustering. Hasil silot skor evaluasi
+[00:05:04] menunjukkan skor 0,6. Hasil skor ini
+[00:05:07] dapat dikatakan skor terbaik karena
+[00:05:09] clustering melalui hyper parameter
+[00:05:11] tuning dengan menentukan K terbaik.
+[00:05:15] Pada demonstrasi aplikasi, pengguna
+[00:05:17] dengan disabilitas pendengaran akan
+[00:05:20] memberikan gestur tangan bahasa isyarat.
+[00:05:22] Hasil citra yang didapatkan akan
+[00:05:24] dikelola oleh komputer vision untuk
+[00:05:26] mendeteksi gester lalu menerjemahkannya
+[00:05:29] menjadi huruf-huruf CB. Sistem
+[00:05:31] menampilkan teks hasil terjemahannya di
+[00:05:33] layar dashboard. Ketika pengguna selesai
+[00:05:35] memberikan gesur tangan, teks, hasil
+[00:05:38] terjemahan tersebut akan dikoreksi oleh
+[00:05:40] LM secara otomatis. Setelah itu pesan
+[00:05:42] yang sudah diperbaiki dapat dikirim
+[00:05:44] langsung pada chatbot. Ketika chatbot
+[00:05:45] bertugas komunikasi penuh, chatbot akan
+[00:05:48] langsung memberikan jawaban tersebut
+[00:05:49] melalui teks. Akan tetapi, ketika
+[00:05:51] komunikasi berjalan bersamaan dengan
+[00:05:53] admin, jawaban dari chatbot akan
+[00:05:55] berperan sebagai rekomendasi jawaban.
+[00:05:57] Rekomendasi ini dapat dievaluasi oleh
+[00:05:59] admin terlebih dahulu untuk memberikan
+[00:06:02] informasi tambahan atau koreksi jawaban
+[00:06:04] yang kemudian dapat dikirim langsung ke
+[00:06:06] pengguna atas izin admin. Jika pengguna
+[00:06:10] mengakhiri percakapan, sistem akan
+[00:06:12] membuat rangkuman secara otomatis dan
+[00:06:14] dapat diakses melalui kode QR yang
+[00:06:16] digenerate. Pengguna dapat memindahi QR
+[00:06:19] code tersebut dengan ponsel mereka yang
+[00:06:21] kemudian diarahkan pada halaman
+[00:06:23] ringkasan percakapan. Ketika
+[00:06:25] di-download, ringkasan tersebut
+[00:06:26] berbentuk file PDF yang dapat diakses di
+[00:06:29] semua device. Super admin dapat menambah
+[00:06:31] admin baru melalui dashboard. Super
+[00:06:34] admin cukup menginputkan email dari
+[00:06:36] admin baru saja yang kemudian sistem
+[00:06:38] akan membuat tautan undangan melalui
+[00:06:40] email. Admin yang baru saja diinvit akan
+[00:06:43] mendapatkan pesan email undangan yang
+[00:06:44] berisi link registrasi. Ketika admin
+[00:06:46] mengunjungi tautan yang diberikan,
+[00:06:48] mereka dapat mengisi kata sandi dan
+[00:06:50] menyelesaikan registrasi yang kemudian
+[00:06:52] terdaftar sebagai admin. Selain dapat
+[00:06:54] mengatur rol admin, super admin juga
+[00:06:56] dapat mengunggah file PDF berisi data
+[00:06:58] set layanan baru. File akan diproses dan
+[00:07:00] disimpan ke dalam knowledge base dan
+[00:07:02] menjadi pengetahuan tambahan chatbot.
+[00:07:04] Sebagai pengguna, kita juga dapat
+[00:07:06] mendapatkan sistem rekomendasi
+[00:07:08] pertanyaan populer yang masing-masing
+[00:07:10] berbeda topik agar mendapatkan referensi
+[00:07:13] pertanyaan sebelum kita memulai sesi
+[00:07:15] komunikasi.
+[00:07:16] Sekian dari kami. Adapun kesalahan
+[00:07:19] penyampaian kami mohon maaf. kami tuna
+[00:07:21] rasa
+[00:07:22] kami pamit

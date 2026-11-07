@@ -1,0 +1,186 @@
+[00:00:01] Indonesia menghadapi tandangan besar
+[00:00:02] dalam mengembangkan talenta digital yang
+[00:00:04] kompeten keterbatasan akses ke
+[00:00:06] pendidikan berkualitas dan kurikulum
+[00:00:07] yang tidak sesuai dengan kebutuhan
+[00:00:09] industri membuat banyak siswa sulit
+[00:00:11] untuk menguasai keterampilan seperti
+[00:00:13] coding dalam era digital ini kebutuhan
+[00:00:16] akan tenaga ahli it itu meningkat namun
+[00:00:18] Indonesia masih harus terus bekerja
+[00:00:20] keras untuk memenuhinya dikutip dari
+[00:00:23] website aptika kominfo data menunjukkan
+[00:00:25] bahwa 97% lulusan TI di Indonesia gagal
+[00:00:28] dalam seleksi perusahaan teknologi bes
+[00:00:30] Ibrahim Ar selaku Vice President
+[00:00:32] engineering Bukalapak menyebutkan dari
+[00:00:35] 30.000 pelamar hanya 3% yang lolos
+[00:00:37] seleksi awal banyak pelamar tidak
+[00:00:39] menguasai dasar-dasar pemrograman yaitu
+[00:00:41] sebagai contohnya adalah algoritma yang
+[00:00:44] mencerminkan rendahnya kompetensi
+[00:00:46] digital kemudian penggunaan kecerdasan
+[00:00:49] buatan atau ai sebagai alat bantu
+[00:00:51] belajar coding semakin diminati hal
+[00:00:53] tersebut bisa dilihat dari survei
+[00:00:55] overflow yang menemukan 37% pengembang
+[00:00:59] global gakan Ai dalam belajar
+[00:01:01] pemrograman dengan ai siswa dapat lebih
+[00:01:04] mudah memahami konsep coding dan
+[00:01:06] mendapatkan bimbingan langsung dari
+[00:01:08] teknologi ini oleh karena itu kami
+[00:01:10] memutuskan untuk mengembangkan sebuah
+[00:01:13] website yaitu website course pemrograman
+[00:01:15] yang berteknologi Ai yaitu yang bernama
+[00:01:17] skill Quest hadir untuk mendukung
+[00:01:20] pembelajaran coding di Indonesia website
+[00:01:23] ini dirancang untuk membantu siswa
+[00:01:24] belajar dengan lebih efektif melalui
+[00:01:26] pendampingan ai bukan hanya memberikan
+[00:01:29] jawaban Ai ini membantu siswa menemukan
+[00:01:32] solusi memperdalam pemahaman dan
+[00:01:35] menjawab pertanyaan yang muncul Selama
+[00:01:37] proses belajar terutama dalam bahasa
+[00:01:39] Python dengan ini siswa tidak hanya
+[00:01:41] belajar mandiri tetapi juga dibantu Ai
+[00:01:44] yang membuat proses pembelajaran lebih
+[00:01:46] terarah dan efisien pada slide ini kita
+[00:01:49] melihat siklus pengembangan skill Quest
+[00:01:51] model pada tahap pertama kita melakukan
+[00:01:53] define text kita menyebarkan kuioner
+[00:01:56] untuk mengetahui kebutuhan user dan
+[00:01:58] recruitment dari dari model Ai ini
+[00:02:02] Setelah itu kita masuk ke
+[00:02:04] dalam college data atau pengumpulan data
+[00:02:08] kami mengumpulkan dataaset dari berbagai
+[00:02:12] sumber dan yang paling utama adalah
+[00:02:14] generate dari api jemini ataupun Open Ai
+[00:02:19] selanjutnya kita masuk ke dalam tahap
+[00:02:21] experiment dan deployment kami sudah
+[00:02:24] melakukan 129 kali running pada skill
+[00:02:27] Quest trial yang mengidentifikasikan
+[00:02:29] bahwa kami sudah melakukan 129 kali
+[00:02:32] running pada trial atau eksperimen kami
+[00:02:36] juga melakukan 150 kali 55 kali running
+[00:02:40] untuk deployment untuk memastikan model
+[00:02:43] Kami adalah model yang terbaik selama
+[00:02:46] proses F tuning proses production pun
+[00:02:48] selesai dalam proses production kami
+[00:02:51] melakukan evaluation dalam evaluasi
+[00:02:53] performa model Kami menggunakan fbd
+[00:02:56] sebagai matrik utama fbd memungkinkan
+[00:02:59] kita meng aluasi kesamaan makna antar
+[00:03:02] jawaban yang dihasilkan model dan
+[00:03:05] referensi dari evaluation dataset
+[00:03:07] memberikan evaluasi yang lebih mendalam
+[00:03:09] dibandingkan dengan F1 score tradisional
+[00:03:12] yang hanya fokus pada kesamaan kata Hal
+[00:03:14] ini penting terutama dalam konteks
+[00:03:16] pemrograman di mana makna dari jawaban
+[00:03:18] sangat penting meski penyusunannya
+[00:03:20] berbeda Selanjutnya kami ada tiga fitur
+[00:03:23] utama yang di mana ada tanya Silva fitur
+[00:03:26] ini menggunakan teknologi hii untuk
+[00:03:27] menjawab berbagai pertanyaan pengguna
+[00:03:30] dan juga Silva bertindak sebagai asisten
+[00:03:33] virtual yang dapat memberikan jawaban
+[00:03:36] solusi atau informasi berdasarkan input
+[00:03:38] dari pengguna membantu mereka untuk
+[00:03:41] menemukan jawaban yang dibutuhkan dengan
+[00:03:43] cepat dan akurat Kemudian yang kedua ada
+[00:03:46] kode playground merupakan area yang
+[00:03:50] merupakan area di mana pengguna dapat
+[00:03:53] menulis menguji dan menjalankan kode
+[00:03:56] program secara langsung fitur ini
+[00:03:58] menyedi
+[00:04:00] interaktif bagi pengguna untuk
+[00:04:02] bereksperimen dengan kode melihat
+[00:04:05] hasilnya secara Real Time dan melakukan
+[00:04:08] debak jika
+[00:04:10] diperlukan kemudian yang terakhir adalah
+[00:04:12] forum diskusi fitur ini memungkinkan
+[00:04:15] pengguna untuk berdiskusi dan bertukar
+[00:04:18] informasi dengan pengguna lainnya
+[00:04:20] melalui forum ini pengguna dapat
+[00:04:22] memposting pertanyaan memberikan jawaban
+[00:04:25] berbagi pengalaman dan berkolaborasi
+[00:04:27] dalam berbagai topik atau isu yang
+[00:04:30] relevan dengan komunitas selanjutnya eh
+[00:04:33] untuk teks front end kami menggembangkan
+[00:04:36] bagian front end website menggunakan
+[00:04:37] laravel sebagai Framework utama yang
+[00:04:40] memfasilitasi pengelolaan tampilan
+[00:04:43] dengan Blade templating system untuk dan
+[00:04:47] untuk styling Kami menggunakan Twin CSS
+[00:04:49] sebagai utility first Framework CSS yang
+[00:04:52] memungkinkan kami membuat desain
+[00:04:55] responsif dengan cepat tanpa harus
+[00:04:57] menulis CSS dari nol
+[00:05:00] hal ini memberikan fleksibilitas tinggi
+[00:05:03] dan kostumisasi yang mudah untuk setiap
+[00:05:05] elemen
+[00:05:07] antarmuka Selain itu kami memanfaatkan
+[00:05:11] flobed UI componen yang menyediakan
+[00:05:13] berbagai komponen siap pakai seperti
+[00:05:16] tombol navigasi model dropdown dan
+[00:05:19] lainnya komponen-komponen ini sudah
+[00:05:22] dirancang dengan menggunakan telwin CSS
+[00:05:25] sehingga integrasinya menjadi simless
+[00:05:28] dengan kode yang sudah ada flobet juga
+[00:05:32] memungkinkan kami untuk fokus pada
+[00:05:34] pengembangan fitur tanpa menghabiskan
+[00:05:36] terlalu banyak waktu mendesain ulang
+[00:05:38] komponen UI yang umum
+[00:05:42] digunakan ini sangat memudahkan kami
+[00:05:45] dalam membangun halaman-halaman yang
+[00:05:47] responsif dan user friendly terutama
+[00:05:50] pada website berbasis course online yang
+[00:05:53] membutukkan tampilan yang rapi dan
+[00:05:55] mudahvigasi oleh
+[00:05:58] pengguna kemudian yang terakhir adalah
+[00:06:01] setiap halaman dalam website mulai dari
+[00:06:03] beranda halaman course papan papan
+[00:06:06] diskusi dibuat secara dan agar responsif
+[00:06:12] dan dapat diakses dengan baik di
+[00:06:15] berbagai ukuran layar kami juga
+[00:06:18] memastikan bahwa komponen-komponen
+[00:06:20] tersebut dapat berfungsi optimal dengan
+[00:06:22] baik maupun di mobile ataupun di desktop
+[00:06:27] sehingga pengalaman pengguna tetap
+[00:06:29] nyaman terlepas dari
+[00:06:31] device yang pengguna
+[00:06:34] gunakan untuk backend kami menggunakan
+[00:06:36] lar Fel webscket MySQL dan mrun
+[00:06:40] arsitektur yang kami terapkan adalah
+[00:06:42] mengikuti pola mvc yang di mana model
+[00:06:45] mengelola data dan dan interaksi dengan
+[00:06:49] database dan untuk view menampilkan data
+[00:06:52] dari controller dan berintegrasi dengan
+[00:06:55] komponen-komponen di front end dan juga
+[00:06:58] untuk kroller sendiri menangani logika
+[00:07:00] seperti pemesanan kur validasi login
+[00:07:04] daftar dan juga interaksi dengan mitrans
+[00:07:08] Kemudian kami juga menggunakan websckets
+[00:07:11] untuk pembaruan secara Real Time contoh
+[00:07:13] kasusnya dan penerapan di sistem skill
+[00:07:17] di sistem website skill Quest adalah
+[00:07:19] waktu pembayaran jadi setelah pembayaran
+[00:07:22] selesai backend dapat menyiarkan event
+[00:07:24] pembayaran berhasil dan frontend akan
+[00:07:27] menerima notifikasi tanpa perlu merrefes
+[00:07:29] halaman tersebut kemudian ada forum
+[00:07:32] diskusi pengguna dapat melihat balasan
+[00:07:35] atau membalas pesan tanpa mrefresh
+[00:07:38] halaman Selain
+[00:07:40] itu ada mitrans yang di mana mitrans ini
+[00:07:44] mempermudah proses pembayaran kurs dan
+[00:07:48] juga pada pembayaran kurs ini peran
+[00:07:53] websocket itu sangat membantu dalam
+[00:07:56] proses secara singkat seperti ini
+[00:07:59] mitrans akan mengirimkan callback
+[00:08:03] setelah transaksi selesai dan callback
+[00:08:06] tersebut akan diterima di road back and
+[00:08:08] laravel dan memungkinkan sistem kami
+[00:08:11] memverifikasi Transaksi dan memperbarui
+[00:08:14] status pemesanan pengguna secara Real
+[00:08:16] Time tanpa me-refresh halaman

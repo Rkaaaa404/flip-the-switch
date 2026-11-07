@@ -1,0 +1,204 @@
+8.0s 1 0.00s - Debugger warning: It seems that frozen modules are being used, which may
+8.0s 2 0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off
+8.0s 3 0.00s - to python to disable frozen modules.
+8.0s 4 0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.
+8.6s 5 0.00s - Debugger warning: It seems that frozen modules are being used, which may
+8.6s 6 0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off
+8.6s 7 0.00s - to python to disable frozen modules.
+8.6s 8 0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.
+13.0s 9 Installing missing packages: ['onnxruntime']...
+15.6s 10 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 23.1/23.1 MB 75.1 MB/s eta 0:00:00
+15.8s 11 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 23.1/23.1 MB 75.1 MB/s eta 0:00:00
+30.6s 12 [GPU ACTIVE] Using GPU: Tesla T4 (Count: 2)
+30.6s 13 🎯 DaFiF Directory : /kaggle/input/datasets/raykapranandita/dataset-for-fishs-freshness-problems (Found: True)
+30.6s 14 🎯 FFE Directory   : /kaggle/input/datasets/raykapranandita/the-freshness-of-the-fish-eyes-dataset-ffe (Found: True)
+30.6s 15 📂 Output Directory: /kaggle/working/output_model1
+32.4s 16 
+32.4s 17 [DAFIF DATASET PARSED] Total Sampel: 2536
+32.4s 18 grade
+32.4s 19 Grade_C    1196
+32.4s 20 Grade_B     940
+32.4s 21 Grade_A     400
+32.4s 22 Name: count, dtype: int64
+36.1s 23 
+36.1s 24 [FFE DATASET PARSED] Total Sampel: 2199
+36.1s 25 grade
+36.1s 26 Grade_A    953
+36.1s 27 Grade_C    625
+36.1s 28 Grade_B    621
+36.1s 29 Name: count, dtype: int64
+38.7s 30 📊 Chart EDA tersimpan: /kaggle/working/output_model1/eda_dataset_distribution.png
+60.2s 31 🖼️ Grid sampel visual tersimpan: /kaggle/working/output_model1/eda_sample_images_by_grade.png
+60.4s 32 ========================================================
+60.4s 33 1. RANDOM SPLIT -> Train: 1775, Val: 380, Test: 381
+60.4s 34 Train Grade Distribution:
+60.4s 35 {'Grade_C': 837, 'Grade_B': 658, 'Grade_A': 280}
+60.4s 36 ========================================================
+60.4s 37 2. GROUPED SPLIT -> Train: 1756, Val: 380, Test: 400
+60.4s 38 Train Grade Distribution:
+60.4s 39 {'Grade_C': 796, 'Grade_B': 740, 'Grade_A': 220}
+60.4s 40 Test  Grade Distribution:
+60.4s 41 {'Grade_C': 280, 'Grade_B': 80, 'Grade_A': 40}
+60.4s 42 ========================================================
+60.8s 43 
+60.8s 44 ========================================================
+60.8s 45 MEMULAI EKSPERIMEN: RANDOM SPLIT (70/15/15)
+60.8s 46 ========================================================
+60.8s 47 Pre-loading 1775 images into RAM (Random Split (70/15/15) Train)...
+326.2s 48 └─ Selesai! 1775 citra tersimpan di RAM.
+326.2s 49 Pre-loading 380 images into RAM (Random Split (70/15/15) Val)...
+391.1s 50 └─ Selesai! 380 citra tersimpan di RAM.
+391.1s 51 Pre-loading 381 images into RAM (Random Split (70/15/15) Test)...
+451.3s 52 └─ Selesai! 381 citra tersimpan di RAM.
+451.3s 53 Downloading: "https://download.pytorch.org/models/mobilenet_v3_small-047dcff4.pth" to /kaggle/working/.cache_torch/checkpoints/mobilenet_v3_small-047dcff4.pth
+451.3s 54 0%|          | 0.00/9.83M [00:00<?, ?B/s]
+451.5s 55 0%|          | 0.00/9.83M [00:00<?, ?B/s]  5%|▌         | 512k/9.83M [00:00<00:01, 4.93MB/s]
+451.6s 56 5%|▌         | 512k/9.83M [00:00<00:01, 4.93MB/s] 65%|██████▍   | 6.38M/9.83M [00:00<00:00, 37.4MB/s]
+451.6s 57 65%|██████▍   | 6.38M/9.83M [00:00<00:00, 37.4MB/s]100%|██████████| 9.83M/9.83M [00:00<00:00, 43.0MB/s]
+451.7s 58 100%|██████████| 9.83M/9.83M [00:00<00:00, 43.0MB/s]
+451.7s 59 
+451.7s 60 
+451.8s 61 └─ Pretrained ImageNet Weights berhasil dimuat.
+452.1s 62 └─ Computed Class Weights: Grade_A: 2.113, Grade_B: 0.899, Grade_C: 0.707
+452.1s 63 
+452.1s 64 🚀 Training selama 12 epoch...
+484.8s 65 Epoch 01/12 [32.7s] - Train Loss: 0.7041 Acc: 65.8% F1: 0.6350 | Val Loss: 1.0288 Acc: 60.5% F1: 0.6066
+499.6s 66 Epoch 02/12 [14.8s] - Train Loss: 0.2127 Acc: 90.7% F1: 0.9045 | Val Loss: 0.6879 Acc: 79.5% F1: 0.8152
+514.5s 67 Epoch 03/12 [14.9s] - Train Loss: 0.1329 Acc: 94.4% F1: 0.9452 | Val Loss: 0.6128 Acc: 81.6% F1: 0.8191
+529.4s 68 Epoch 04/12 [14.9s] - Train Loss: 0.0838 Acc: 96.8% F1: 0.9671 | Val Loss: 0.1828 Acc: 93.9% F1: 0.9325
+544.2s 69 Epoch 05/12 [14.8s] - Train Loss: 0.0604 Acc: 97.6% F1: 0.9772 | Val Loss: 0.0735 Acc: 97.4% F1: 0.9737
+559.0s 70 Epoch 06/12 [14.8s] - Train Loss: 0.0358 Acc: 98.8% F1: 0.9882 | Val Loss: 0.0808 Acc: 97.1% F1: 0.9643
+573.8s 71 Epoch 07/12 [14.8s] - Train Loss: 0.0272 Acc: 99.0% F1: 0.9904 | Val Loss: 0.2385 Acc: 91.1% F1: 0.9257
+588.9s 72 Epoch 08/12 [15.1s] - Train Loss: 0.0186 Acc: 99.4% F1: 0.9943 | Val Loss: 0.0418 Acc: 98.4% F1: 0.9874
+603.7s 73 Epoch 09/12 [14.8s] - Train Loss: 0.0197 Acc: 99.4% F1: 0.9939 | Val Loss: 0.0054 Acc: 99.7% F1: 0.9963
+618.5s 74 Epoch 10/12 [14.8s] - Train Loss: 0.0147 Acc: 99.4% F1: 0.9947 | Val Loss: 0.0089 Acc: 99.5% F1: 0.9958
+633.3s 75 Epoch 11/12 [14.8s] - Train Loss: 0.0100 Acc: 99.5% F1: 0.9947 | Val Loss: 0.0034 Acc: 100.0% F1: 1.0000
+648.2s 76 Epoch 12/12 [14.9s] - Train Loss: 0.0118 Acc: 99.5% F1: 0.9949 | Val Loss: 0.0023 Acc: 100.0% F1: 1.0000
+648.8s 77 
+648.8s 78 📊 HASIL EVALUASI [Random Split (70/15/15)]:
+648.8s 79 ├─ Test Accuracy   : 99.48%
+648.8s 80 ├─ Macro F1-Score  : 0.9958
+648.8s 81 └─ RECALL GRADE C  : 1.0000 (Safety Critical)
+648.8s 82 
+648.8s 83 Classification Report:
+648.8s 84 precision    recall  f1-score   support
+648.8s 85 
+648.8s 86 Grade_A     1.0000    1.0000    1.0000        60
+648.8s 87 Grade_B     1.0000    0.9858    0.9929       141
+648.8s 88 Grade_C     0.9890    1.0000    0.9945       180
+648.8s 89 
+648.8s 90 accuracy                         0.9948       381
+648.8s 91 macro avg     0.9963    0.9953    0.9958       381
+648.8s 92 weighted avg     0.9948    0.9948    0.9947       381
+648.8s 93 
+648.8s 94 
+648.8s 95 ========================================================
+648.8s 96 MEMULAI EKSPERIMEN: GROUPED SPLIT (BY DAY/SESSION)
+648.8s 97 ========================================================
+648.8s 98 Pre-loading 1756 images into RAM (Grouped Split (by Day/Session) Train)...
+948.4s 99 └─ Selesai! 1756 citra tersimpan di RAM.
+948.4s 100 Pre-loading 380 images into RAM (Grouped Split (by Day/Session) Val)...
+1022.7s 101 └─ Selesai! 380 citra tersimpan di RAM.
+1022.7s 102 Pre-loading 400 images into RAM (Grouped Split (by Day/Session) Test)...
+1085.5s 103 └─ Selesai! 400 citra tersimpan di RAM.
+1085.5s 104 └─ Pretrained ImageNet Weights berhasil dimuat.
+1085.5s 105 └─ Computed Class Weights: Grade_A: 2.661, Grade_B: 0.791, Grade_C: 0.735
+1085.5s 106 
+1085.5s 107 🚀 Training selama 12 epoch...
+1106.8s 108 Epoch 01/12 [21.3s] - Train Loss: 0.6284 Acc: 69.6% F1: 0.6719 | Val Loss: 1.8472 Acc: 60.0% F1: 0.5689
+1121.5s 109 Epoch 02/12 [14.6s] - Train Loss: 0.2118 Acc: 90.5% F1: 0.9089 | Val Loss: 3.5200 Acc: 59.2% F1: 0.5706
+1136.3s 110 Epoch 03/12 [14.8s] - Train Loss: 0.0964 Acc: 96.0% F1: 0.9591 | Val Loss: 3.1231 Acc: 66.3% F1: 0.6596
+1151.0s 111 Epoch 04/12 [14.7s] - Train Loss: 0.0770 Acc: 97.0% F1: 0.9640 | Val Loss: 2.1744 Acc: 76.6% F1: 0.7666
+1165.9s 112 Epoch 05/12 [14.8s] - Train Loss: 0.0569 Acc: 97.8% F1: 0.9759 | Val Loss: 1.5071 Acc: 77.9% F1: 0.7816
+1180.5s 113 Epoch 06/12 [14.7s] - Train Loss: 0.0490 Acc: 97.9% F1: 0.9812 | Val Loss: 1.1122 Acc: 81.6% F1: 0.8163
+1195.4s 114 Epoch 07/12 [14.9s] - Train Loss: 0.0222 Acc: 99.4% F1: 0.9925 | Val Loss: 1.2060 Acc: 82.9% F1: 0.8287
+1210.2s 115 Epoch 08/12 [14.8s] - Train Loss: 0.0194 Acc: 99.3% F1: 0.9916 | Val Loss: 1.4988 Acc: 79.2% F1: 0.7913
+1224.9s 116 Epoch 09/12 [14.7s] - Train Loss: 0.0198 Acc: 99.1% F1: 0.9908 | Val Loss: 1.3197 Acc: 80.5% F1: 0.8047
+1239.7s 117 Epoch 10/12 [14.8s] - Train Loss: 0.0075 Acc: 99.7% F1: 0.9978 | Val Loss: 1.2180 Acc: 80.5% F1: 0.8049
+1254.6s 118 Epoch 11/12 [14.9s] - Train Loss: 0.0114 Acc: 99.7% F1: 0.9974 | Val Loss: 1.1088 Acc: 81.3% F1: 0.8135
+1269.4s 119 Epoch 12/12 [14.8s] - Train Loss: 0.0129 Acc: 99.5% F1: 0.9949 | Val Loss: 1.0596 Acc: 82.4% F1: 0.8243
+1270.0s 120 
+1270.0s 121 📊 HASIL EVALUASI [Grouped Split (by Day/Session)]:
+1270.0s 122 ├─ Test Accuracy   : 75.75%
+1270.0s 123 ├─ Macro F1-Score  : 0.6648
+1270.0s 124 └─ RECALL GRADE C  : 0.8464 (Safety Critical)
+1270.0s 125 
+1270.0s 126 Classification Report:
+1270.0s 127 precision    recall  f1-score   support
+1270.0s 128 
+1270.0s 129 Grade_A     0.6230    0.9500    0.7525        40
+1270.0s 130 Grade_B     0.4308    0.3500    0.3862        80
+1270.0s 131 Grade_C     0.8650    0.8464    0.8556       280
+1270.0s 132 
+1270.0s 133 accuracy                         0.7575       400
+1270.0s 134 macro avg     0.6396    0.7155    0.6648       400
+1270.0s 135 weighted avg     0.7539    0.7575    0.7514       400
+1270.0s 136 
+1270.0s 137 
+1270.0s 138 ========================================================
+1270.0s 139 SECONDARY VALIDATION ON FFE (CROSS-SPECIES & MACRO EYE)
+1270.0s 140 ========================================================
+1270.0s 141 Pre-loading 2199 images into RAM (FFE Secondary Test)...
+1283.5s 142 └─ Selesai! 2199 citra tersimpan di RAM.
+1286.0s 143 FFE Cross-Species Test -> Accuracy: 41.70% | Macro F1: 0.3032 | Recall Grade C: 0.0352
+1286.0s 144 precision    recall  f1-score   support
+1286.0s 145 
+1286.0s 146 Grade_A     0.4430    0.7828    0.5658       953
+1286.0s 147 Grade_B     0.3394    0.2399    0.2811       621
+1286.0s 148 Grade_C     0.2895    0.0352    0.0628       625
+1286.0s 149 
+1286.0s 150 accuracy                         0.4170      2199
+1286.0s 151 macro avg     0.3573    0.3526    0.3032      2199
+1286.0s 152 weighted avg     0.3701    0.4170    0.3424      2199
+1286.0s 153 
+1287.8s 154 📈 Kurva training tersimpan: /kaggle/working/output_model1/training_curves_comparison.png
+1291.0s 155 🎯 Confusion matrices tersimpan: /kaggle/working/output_model1/confusion_matrices_all.png
+1315.1s 156 🖼️ Sample predictions grid tersimpan: /kaggle/working/output_model1/sample_test_predictions_grid.png
+1315.5s 157 
+1315.5s 158 ========================================================
+1315.5s 159 EXPORTING BEST MODEL TO ONNX (FLOAT32)
+1315.5s 160 ========================================================
+1315.5s 161 1. PyTorch Weights Saved   : /kaggle/working/output_model1/mobilenetv3_freshness.pt (5.93 MB)
+1315.5s 162 ⚠️ Warning: Export ONNX dengan opset 18 gagal (No module named 'onnxscript'). Mencoba opset berikutnya...
+1315.5s 163 ⚠️ Warning: Export ONNX dengan opset 17 gagal (No module named 'onnxscript'). Mencoba opset berikutnya...
+1315.5s 164 ⚠️ Warning: Export ONNX dengan opset 14 gagal (No module named 'onnxscript'). Mencoba opset berikutnya...
+1315.5s 165 ⚠️ Warning: Export ONNX dengan opset 13 gagal (No module named 'onnxscript'). Mencoba opset berikutnya...
+1315.5s 166 ❌ Error fatal: Gagal mengekspor model ke ONNX: No module named 'onnxscript'
+1315.9s 167 
+1315.9s 168 ========================================================
+1315.9s 169 BENCHMARKING CPU INFERENCE LATENCY (EDGE SIMULATION)
+1315.9s 170 ========================================================
+1318.8s 171 ⚠️ Warning: File ONNX /kaggle/working/output_model1/mobilenetv3_freshness.onnx tidak ditemukan / 0 bytes. Melewati benchmark ONNX Runtime.
+1318.8s 172 
+1318.8s 173 📊 HASIL BENCHMARK LATENSI CPU (Batch Size = 1):
+1318.8s 174 ├─ 1. PyTorch CPU Native   : 11.48 ms/frame (87.1 FPS)
+1318.8s 175 └─ 2. ONNX Runtime FP32    : N/A (ONNX Session Error/File Missing)
+1319.0s 176 
+1319.0s 177 ======================================================================
+1319.0s 178 ⭐ RINGKASAN DATA AKHIR MODEL 1 (NUSAQC FRESHNESS ENGINE)
+1319.0s 179 ======================================================================
+1319.0s 180 Metode Evaluasi Akurasi (%) Macro F1 Recall Grade C                          Status
+1319.0s 181 Random Split (Baseline)      99.48%   0.9958         1.0000 Artificially Inflated (Leakage)
+1319.0s 182 Grouped Split (Honest)      75.75%   0.6648         0.8464       Production Generalization
+1319.0s 183 FFE Secondary Test      41.70%   0.3032         0.0352        Domain/Modality Mismatch
+1319.0s 184 
+1319.0s 185 📦 MODEL ARTIFACT SIZES & LATENCY:
+1319.0s 186 ├─ PyTorch Weight (.pt)    : 5.93 MB
+1319.0s 187 └─ ONNX FP32 (.onnx)       : 0.00 MB | Latensi: N/A
+1319.0s 188 
+1319.0s 189 📂 Seluruh artefak visual (.png) & model (.onnx) tersimpan di: /kaggle/working/output_model1
+1319.0s 190 ======================================================================
+1325.0s 191 /usr/local/lib/python3.12/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\|'
+1325.0s 192 cells[i][c] = re.sub('\\\\\|', '|', cell)
+1325.2s 193 /usr/local/lib/python3.12/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\_'
+1325.2s 194 text = re.sub(r'_', '\_', text) # Escape underscores in display text
+1325.8s 195 [NbConvertApp] Converting notebook __notebook__.ipynb to notebook
+1326.2s 196 [NbConvertApp] Writing 4875412 bytes to __notebook__.ipynb
+1328.5s 197 [NbConvertApp] Converting notebook __notebook__.ipynb to html
+1329.6s 198 [NbConvertApp] Support files will be in __results___files/
+1329.6s 199 [NbConvertApp] Making directory __results___files
+1329.6s 200 [NbConvertApp] Making directory __results___files
+1329.6s 201 [NbConvertApp] Making directory __results___files
+1329.6s 202 [NbConvertApp] Making directory __results___files
+1329.6s 203 [NbConvertApp] Making directory __results___files
+1329.6s 204 [NbConvertApp] Writing 503191 bytes to __results__.html

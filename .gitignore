@@ -1,0 +1,86 @@
+# ==========================================
+# Environments & Secrets
+# ==========================================
+.env
+.env*.local
+*.env
+!.env.example
+
+# ==========================================
+# Dependencies & Virtual Environments
+# ==========================================
+node_modules/
+**/node_modules/
+.venv/
+**/.venv/
+venv/
+**/venv/
+env/
+**/env/
+
+# ==========================================
+# Python & Bytecode (CPython / PyCache)
+# ==========================================
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*$py.class
+*.cpython-*.pyc
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# ==========================================
+# Node.js & Frontend (Next.js)
+# ==========================================
+.next/
+**/.next/
+out/
+**/out/
+build/
+dist/
+.turbo/
+package-lock.json
+**/package-lock.json
+yarn.lock
+**/yarn.lock
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# ==========================================
+# Database & Runtime Uploads
+# ==========================================
+*.db
+*.sqlite
+*.sqlite3
+**/nusaqc.db
+backend/uploads/*
+!backend/uploads/.gitkeep
+**/backend/uploads/*
+!**/backend/uploads/.gitkeep
+
+# ==========================================
+# Heavy Datasets & Archives (> 100MB / Git Bloat)
+# ==========================================
+code/models/datasets/
+**/datasets/
+*.zip
+*.tar.gz
+
+# ==========================================
+# IDE & Operating System Files
+# ==========================================
+.DS_Store
+Thumbs.db
+ehthumbs.db
+.history/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+.agents/
