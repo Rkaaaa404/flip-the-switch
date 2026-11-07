@@ -1,0 +1,266 @@
+{
+  "framework": "NusaQC Automated Test Suite",
+  "execution_timestamp": "2026-09-26T04:38:11Z",
+  "suites_executed": [
+    "test_agentic_adjudication",
+    "test_core_accuracy",
+    "test_optical_robustness",
+    "test_edge_cases",
+    "test_async_stream",
+    "test_quantization_performance"
+  ],
+  "agentic_adjudication": {
+    "suite_name": "test_agentic_adjudication",
+    "timestamp": "2026-09-26T04:38:13Z",
+    "borderline_resolution_scenario": {
+      "samples_tested": 50,
+      "resolution_rate_pct": 100.0,
+      "accuracy_vs_expert_pct": 86.0,
+      "average_latency_ms": 1188.93
+    },
+    "reasoning_validation_scenario": {
+      "validity_rate_pct": 100.0,
+      "sample_reasoning": "AI Agent Evaluasi: Citra LOT-20260926-TEST-001 menunjukkan kornea mata sedikit berkabut namun struktur insang masih berwarna merah segar dan bebas dari kontaminasi lendir/parasit. Memenuhi ambang batas toleransi Grade B."
+    },
+    "timeout_and_fallback_scenario": {
+      "tested_failures": 25,
+      "fallback_success_rate_pct": 100.0,
+      "uncaught_exceptions": 0
+    }
+  },
+  "total_elapsed_seconds": 1.73,
+  "core_accuracy": {
+    "suite_name": "test_core_accuracy",
+    "timestamp": "2026-09-26T04:33:26Z",
+    "total_samples": 1022,
+    "freshness_samples_count": 380,
+    "defect_samples_count": 642,
+    "models_status": {
+      "freshness_model": {
+        "name": "MobileNetV3-Small Freshness Classifier",
+        "version": "v1.0-onnx",
+        "status": "Loaded (ONNX Runtime CPU)",
+        "input_shape": [
+          1,
+          3,
+          224,
+          224
+        ],
+        "classes": [
+          "A",
+          "B",
+          "C"
+        ]
+      },
+      "defect_model": {
+        "name": "YOLOv8s Surface Defect Detector",
+        "version": "8.4.121",
+        "status": "Loaded (ONNX Runtime CPU)",
+        "input_shape": [
+          1,
+          3,
+          640,
+          640
+        ],
+        "classes": [
+          "sisik_sisa",
+          "warna_abnormal",
+          "luka_robekan",
+          "lendir_berlebih"
+        ]
+      }
+    },
+    "freshness_evaluation": {
+      "metrics": {
+        "accuracy": 100.0,
+        "macro_f1": 100.0,
+        "macro_recall": 100.0,
+        "macro_precision": 100.0,
+        "per_class": {
+          "A": {
+            "precision": 100.0,
+            "recall": 100.0,
+            "f1": 100.0,
+            "support": 60
+          },
+          "B": {
+            "precision": 100.0,
+            "recall": 100.0,
+            "f1": 100.0,
+            "support": 141
+          },
+          "C": {
+            "precision": 100.0,
+            "recall": 100.0,
+            "f1": 100.0,
+            "support": 179
+          }
+        },
+        "confusion_matrix": [
+          [
+            60,
+            0,
+            0
+          ],
+          [
+            0,
+            141,
+            0
+          ],
+          [
+            0,
+            0,
+            179
+          ]
+        ]
+      },
+      "average_latency_ms": 5.39,
+      "fatal_misclassifications_c_to_a": 0
+    },
+    "defect_evaluation": {
+      "metrics": {
+        "precision": 89.56,
+        "recall": 53.61,
+        "fnr": 46.39,
+        "far": 10.44,
+        "map50": 50.41,
+        "total_gt": 720,
+        "true_positives": 386,
+        "false_positives": 45,
+        "false_negatives": 334,
+        "class_breakdown": {
+          "sisik_sisa": {
+            "tp": 51,
+            "fp": 9,
+            "fn": 0,
+            "gt": 0
+          },
+          "warna_abnormal": {
+            "tp": 229,
+            "fp": 8,
+            "fn": 0,
+            "gt": 0
+          },
+          "luka_robekan": {
+            "tp": 45,
+            "fp": 8,
+            "fn": 0,
+            "gt": 0
+          },
+          "lendir_berlebih": {
+            "tp": 61,
+            "fp": 20,
+            "fn": 0,
+            "gt": 0
+          }
+        }
+      },
+      "average_latency_ms": 255.34
+    }
+  },
+  "optical_robustness": {
+    "suite_name": "test_optical_robustness",
+    "timestamp": "2026-09-26T04:35:53Z",
+    "samples_evaluated": 50,
+    "freshness_samples_count": 25,
+    "defect_samples_count": 25,
+    "specular_glare_scenario": {
+      "clean_avg_confidence": 99.42,
+      "glare_avg_confidence": 93.87,
+      "confidence_drop_pct": 5.55,
+      "glare_false_alarm_rate": 0.0,
+      "defect_recall": 60.0,
+      "defect_fnr": 40.0
+    },
+    "low_light_scenario": {
+      "low_light_avg_confidence": 89.61,
+      "confidence_drop_pct": 9.81,
+      "macro_f1": 41.58,
+      "recall_retain_rate": 65.0
+    },
+    "motion_blur_scenario": {
+      "blur_avg_confidence": 79.44,
+      "confidence_drop_pct": 19.98,
+      "macro_f1": 67.29,
+      "recall_retain_rate": 40.0
+    }
+  },
+  "edge_cases": {
+    "suite_name": "test_edge_cases",
+    "timestamp": "2026-09-26T04:36:27Z",
+    "empty_conveyor_scenario": {
+      "tested_frames": 20,
+      "phantom_detections": 0,
+      "phantom_detection_rate_pct": 0.0,
+      "status": "PASSED"
+    },
+    "ood_anomaly_scenario": {
+      "tested_frames": 15,
+      "target_fish_avg_confidence": 95.0,
+      "ood_avg_confidence": 60.08,
+      "confidence_drop_pct": 34.92
+    },
+    "partial_occlusion_scenario": {
+      "recall_clean": 80.0,
+      "recall_occlusion_30": 64.0,
+      "recall_occlusion_50": 28.0,
+      "recall_drop_50_pct": 52.0
+    },
+    "unresolved_edge_case": {
+      "title": "Severe Conveyor Edge Occlusion (>50%)",
+      "observed_defect_recall": 28.0,
+      "failure_reason": "Single top-down perspective cannot reconstruct occluded fish anatomy.",
+      "planned_mitigation_roadmap": "Deploy dual stereo-vision cameras and train on synthetically occluded fish dataset."
+    }
+  },
+  "async_stream": {
+    "suite_name": "test_async_stream",
+    "timestamp": "2026-09-26T04:36:57Z",
+    "burst_stream_scenario": {
+      "total_frames": 40,
+      "duration_sec": 9.09,
+      "throughput_fps": 4.4,
+      "avg_e2e_latency_ms": 4696.8,
+      "frame_drop_rate_pct": 0.0
+    },
+    "memory_stability_scenario": {
+      "initial_memory_mb": 141.06,
+      "final_memory_mb": 146.24,
+      "growth_rate_mb_per_min": 2.59,
+      "memory_leak_detected": false
+    }
+  },
+  "quantization_performance": {
+    "suite_name": "test_quantization_performance",
+    "timestamp": "2026-09-26T04:30:31Z",
+    "model_footprint": {
+      "fp32_size_mb": 42.68,
+      "int8_size_mb": null,
+      "size_reduction_pct": null,
+      "int8_status": "PENDING_PHASE_2"
+    },
+    "latency_and_throughput": {
+      "host_cpu": {
+        "fp32_latency_ms": 226.83,
+        "fp32_fps": 4.41,
+        "int8_latency_ms": null,
+        "int8_fps": null,
+        "speedup_factor": null
+      },
+      "edge_rpi4_reference": {
+        "fp32_latency_ms": 1315.0,
+        "fp32_fps": 0.76,
+        "int8_latency_ms": null,
+        "int8_fps": null,
+        "speedup_target": 3.46
+      }
+    },
+    "baseline_bottleneck_finding": {
+      "fp32_size_mb": 42.68,
+      "fp32_host_cpu_latency_ms": 226.83,
+      "fp32_edge_latency_projection_ms": 1315.0,
+      "fp32_edge_fps_projection": 0.76,
+      "recommendation_phase_2": "Wajib Kuantisasi Dinamis INT8 pada Fase II untuk mengejar target >2.5 FPS pada Edge RPi 4"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "suite_name": "test_agentic_adjudication",
+  "timestamp": "2026-09-26T04:38:13Z",
+  "borderline_resolution_scenario": {
+    "samples_tested": 50,
+    "resolution_rate_pct": 100.0,
+    "accuracy_vs_expert_pct": 86.0,
+    "average_latency_ms": 1188.93
+  },
+  "reasoning_validation_scenario": {
+    "validity_rate_pct": 100.0,
+    "sample_reasoning": "AI Agent Evaluasi: Citra LOT-20260926-TEST-001 menunjukkan kornea mata sedikit berkabut namun struktur insang masih berwarna merah segar dan bebas dari kontaminasi lendir/parasit. Memenuhi ambang batas toleransi Grade B."
+  },
+  "timeout_and_fallback_scenario": {
+    "tested_failures": 25,
+    "fallback_success_rate_pct": 100.0,
+    "uncaught_exceptions": 0
+  }
+}

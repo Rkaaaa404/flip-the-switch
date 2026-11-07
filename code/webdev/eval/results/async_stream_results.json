@@ -1,0 +1,17 @@
+{
+  "suite_name": "test_async_stream",
+  "timestamp": "2026-09-26T04:36:57Z",
+  "burst_stream_scenario": {
+    "total_frames": 40,
+    "duration_sec": 9.09,
+    "throughput_fps": 4.4,
+    "avg_e2e_latency_ms": 4696.8,
+    "frame_drop_rate_pct": 0.0
+  },
+  "memory_stability_scenario": {
+    "initial_memory_mb": 141.06,
+    "final_memory_mb": 146.24,
+    "growth_rate_mb_per_min": 2.59,
+    "memory_leak_detected": false
+  }
+}

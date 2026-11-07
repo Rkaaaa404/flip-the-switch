@@ -1,0 +1,27 @@
+{
+  "suite_name": "test_optical_robustness",
+  "timestamp": "2026-09-26T04:35:53Z",
+  "samples_evaluated": 50,
+  "freshness_samples_count": 25,
+  "defect_samples_count": 25,
+  "specular_glare_scenario": {
+    "clean_avg_confidence": 99.42,
+    "glare_avg_confidence": 93.87,
+    "confidence_drop_pct": 5.55,
+    "glare_false_alarm_rate": 0.0,
+    "defect_recall": 60.0,
+    "defect_fnr": 40.0
+  },
+  "low_light_scenario": {
+    "low_light_avg_confidence": 89.61,
+    "confidence_drop_pct": 9.81,
+    "macro_f1": 41.58,
+    "recall_retain_rate": 65.0
+  },
+  "motion_blur_scenario": {
+    "blur_avg_confidence": 79.44,
+    "confidence_drop_pct": 19.98,
+    "macro_f1": 67.29,
+    "recall_retain_rate": 40.0
+  }
+}

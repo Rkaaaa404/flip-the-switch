@@ -1,0 +1,16 @@
+[project]
+name = "backend"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi[standard]>=0.141.1",
+    "numpy>=2.5.2",
+    "onnxruntime>=1.29.0",
+    "opencv-python-headless>=5.0.0.93",
+    "pillow>=12.3.0",
+    "pydantic-settings>=2.15.0",
+    "python-multipart>=0.0.32",
+    "sqlalchemy>=2.0.52",
+]

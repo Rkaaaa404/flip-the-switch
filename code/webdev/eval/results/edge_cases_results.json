@@ -1,0 +1,28 @@
+{
+  "suite_name": "test_edge_cases",
+  "timestamp": "2026-09-26T04:36:27Z",
+  "empty_conveyor_scenario": {
+    "tested_frames": 20,
+    "phantom_detections": 0,
+    "phantom_detection_rate_pct": 0.0,
+    "status": "PASSED"
+  },
+  "ood_anomaly_scenario": {
+    "tested_frames": 15,
+    "target_fish_avg_confidence": 95.0,
+    "ood_avg_confidence": 60.08,
+    "confidence_drop_pct": 34.92
+  },
+  "partial_occlusion_scenario": {
+    "recall_clean": 80.0,
+    "recall_occlusion_30": 64.0,
+    "recall_occlusion_50": 28.0,
+    "recall_drop_50_pct": 52.0
+  },
+  "unresolved_edge_case": {
+    "title": "Severe Conveyor Edge Occlusion (>50%)",
+    "observed_defect_recall": 28.0,
+    "failure_reason": "Single top-down perspective cannot reconstruct occluded fish anatomy.",
+    "planned_mitigation_roadmap": "Deploy dual stereo-vision cameras and train on synthetically occluded fish dataset."
+  }
+}
