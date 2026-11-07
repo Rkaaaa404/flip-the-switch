@@ -98,6 +98,6 @@ Untuk mencegah pembiasan (*class drift/hallucination*) oleh Seed Model pada data
 
 ## 🔗 Sinergi dengan Dokumen Proyek Lainnya
 
-1. **[MODEL_2_PIPELINE_GUIDE.md](file:///d:/main/Documents/explore/compe/hackhathon/AIC/models/model_2/MODEL_2_PIPELINE_GUIDE.md)**: Telah diperbarui mencakup alur 3-tahap eksekusi Kaggle (Seed Model ➔ Pseudo-labeling ➔ Retrain Final).
-2. **[ANNOTATION_GUIDE_MODEL2.md](file:///d:/main/Documents/explore/compe/hackhathon/AIC/models/model_2/ANNOTATION_GUIDE_MODEL2.md)**: Telah diselaraskan dengan kriteria visual 4 kelas dan dikonfirmasi 1-to-1 dengan template XML Label Studio [`02_label_studio_config.xml`](file:///d:/main/Documents/explore/compe/hackhathon/AIC/models/model_2/02_label_studio_config.xml).
-3. **[docs/md/datasets.md](file:///d:/main/Documents/explore/compe/hackhathon/AIC/docs/md/datasets.md)**: Spesifikasi dataset 1 telah diperbarui dari Saon110 ke `panda992/fish_disease_datasets` (2.450 citra).
+1. **[MODEL_2_PIPELINE_GUIDE.md](MODEL_2_PIPELINE_GUIDE.md)**: Telah diperbarui mencakup alur 3-tahap eksekusi Kaggle (Seed Model ➔ Pseudo-labeling ➔ Retrain Final).
+2. **[ANNOTATION_GUIDE_MODEL2.md](ANNOTATION_GUIDE_MODEL2.md)**: Telah diselaraskan dengan kriteria visual 4 kelas dan dikonfirmasi 1-to-1 dengan template XML Label Studio [`02_label_studio_config.xml`](02_label_studio_config.xml).
+3. **[docs/md/datasets.md](../../../docs/archive/legacy-nusaqc/docs/md/datasets.md)**: Spesifikasi dataset 1 telah diperbarui dari Saon110 ke `panda992/fish_disease_datasets` (2.450 citra).

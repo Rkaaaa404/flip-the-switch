@@ -8,7 +8,7 @@ Dokumen ini menjelaskan alur kerja (*pipeline*), panduan eksekusi di Kaggle, int
 ## 1. Arsitektur Single-File All-in-One Pipeline
 
 Seluruh alur dari **EDA**, **Dual-Split**, **Class-Weighted Training**, **Secondary FFE Validation**, **Visualisasi**, **ONNX Export (Opset 18)**, hingga **Benchmarking Latensi CPU** dikemas dalam satu file:
-👉 **[`01_model1_full_pipeline.py`](file:///d:/main/Documents/explore/compe/hackhathon/AIC/models/model_1/01_model1_full_pipeline.py)**
+👉 **[`01_model1_full_pipeline.py`](01_model1_full_pipeline.py)**
 
 ### Keunggulan Utama Pipeline:
 1. **Ultra-Fast In-Memory Preload (`FastRAMFishDataset`):** Mengeliminasi bottleneck disk I/O Kaggle dengan me-resize dan menyimpan seluruh dataset ke RAM saat inisialisasi (~15 detik). Seluruh training 12 epoch selesai dalam < 2 menit di GPU T4/P100.
@@ -59,6 +59,6 @@ Setelah script dijalankan, folder `/kaggle/working/output_model1/` akan berisi a
 3. Tambahkan 2 dataset input:
    - `raykapranandita/dataset-for-fishs-freshness-problems`
    - `raykapranandita/the-freshness-of-the-fish-eyes-dataset-ffe`
-4. Copy-paste isi [`01_model1_full_pipeline.py`](file:///d:/main/Documents/explore/compe/hackhathon/AIC/models/model_1/01_model1_full_pipeline.py) ke dalam notebook cell.
+4. Copy-paste isi [`01_model1_full_pipeline.py`](01_model1_full_pipeline.py) ke dalam notebook cell.
 5. Jalankan (**Run All**). Waktu eksekusi rata-rata: **~2 menit**.
 6. Unduh folder `/kaggle/working/output_model1/` untuk mengambil seluruh grafik visual dan bobot model `.onnx`.

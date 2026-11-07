@@ -34,7 +34,7 @@ Berdasarkan hasil eksperimen Kaggle, ditemukan temuan penting yang harus diangka
 
 ### A. All-in-One Fast In-Memory Script:
 Pipeline digabung menjadi satu file terpadu yang mengeksekusi seluruh siklus secara otomatis dalam < 2 menit:
-👉 [`models/model_1/01_model1_full_pipeline.py`](file:///d:/main/Documents/explore/compe/hackhathon/AIC/models/model_1/01_model1_full_pipeline.py)
+👉 [`models/model_1/01_model1_full_pipeline.py`](01_model1_full_pipeline.py)
 
 ### B. Fitur Baru yang Diimplementasikan:
 1. **Class-Weighted CrossEntropyLoss:** Memberikan penalti berimbang untuk kelas minoritas Grade A (15.8%) dibanding Grade C (47.2%).
