@@ -8,6 +8,7 @@ import {
   Truck,
   Settings,
   LogOut,
+  PackageSearch,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -21,6 +22,7 @@ export const Sidebar = () => {
   const navItems = [
     { href: "/", label: "Dashboard", icon: LayoutDashboard },
     { href: "/inspection", label: "Inspection", icon: ScanLine },
+    { href: "/deliveries", label: "Receiving & Trace", icon: PackageSearch },
     { href: "/history", label: "Lot History", icon: History },
     { href: "/storage", label: "Lot Storage", icon: Boxes },
     { href: "/dispatch", label: "Export Dispatch", icon: Truck },
