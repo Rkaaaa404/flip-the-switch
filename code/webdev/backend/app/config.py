@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     ENABLE_MOCK_HARDWARE: bool = True
     MODEL_DIR: str = "./models_weights"
     UPLOAD_DIR: str = "./uploads"
+    CAPTURE_MIN_FREE_BYTES: int = 10 * 1024**3
 
     class Config:
         env_file = ".env"
