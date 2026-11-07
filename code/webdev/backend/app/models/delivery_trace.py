@@ -133,6 +133,8 @@ class HumanDisposition(Base):
     authorized_by = Column(String(64), nullable=False)
     decided_at = Column(DateTime, nullable=False, default=utcnow, index=True)
     supersedes_id = Column(Integer, ForeignKey("human_dispositions.id"), nullable=True, unique=True)
+    authorized_via = Column(String(32), nullable=True)  # "switch_gate" when signed in a Switch room
+    switch_message_id = Column(String(64), nullable=True, index=True)
 
 
 class MaterialMovement(Base):
@@ -152,3 +154,5 @@ class MaterialMovement(Base):
     operator_id = Column(String(64), nullable=False)
     timestamp = Column(DateTime, nullable=False, default=utcnow, index=True)
     notes = Column(Text, nullable=True)
+    authorized_via = Column(String(32), nullable=True)
+    switch_message_id = Column(String(64), nullable=True, index=True)

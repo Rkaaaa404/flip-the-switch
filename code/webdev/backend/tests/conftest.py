@@ -13,6 +13,8 @@ os.environ["DATABASE_URL"] = "sqlite:///" + os.path.join(_TMP, "test.db").replac
 os.environ["UPLOAD_DIR"] = os.path.join(_TMP, "uploads")
 os.makedirs(os.environ["UPLOAD_DIR"], exist_ok=True)
 os.environ["CAPTURE_MIN_FREE_BYTES"] = "0"
+os.environ["QC_AGENT_TOKEN"] = AGENT_TOKEN = "test-agent-token"
+os.environ["QC_GATE_TOKEN"] = GATE_TOKEN = "test-gate-token"
 
 import pytest
 from fastapi.testclient import TestClient
@@ -85,6 +87,13 @@ def png_bytes() -> bytes:
 
 @pytest.fixture
 def client():
+    """HTTP client that signs as qc-gate, so the existing write-route tests keep exercising the service."""
+    with TestClient(fastapi_app, headers={"X-Api-Token": GATE_TOKEN}) as c:
+        yield c
+
+
+@pytest.fixture
+def anon_client():
     with TestClient(fastapi_app) as c:
         yield c
 

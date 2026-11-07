@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from app.api.v1 import inspections, lots, dashboard, hardware, storage, dispatch, deliveries, settings as settings_api
+from app.api.v1 import inspections, lots, dashboard, hardware, storage, dispatch, deliveries, switchroom, settings as settings_api
 
 api_v1_router = APIRouter()
 
@@ -11,3 +11,4 @@ api_v1_router.include_router(storage.router, prefix="/storage", tags=["Storage"]
 api_v1_router.include_router(dispatch.router, prefix="/dispatch", tags=["Dispatch"])
 api_v1_router.include_router(settings_api.router, prefix="/settings", tags=["Settings"])
 api_v1_router.include_router(deliveries.router, prefix="/deliveries", tags=["Deliveries & Traceability"])
+api_v1_router.include_router(switchroom.router, prefix="/switchroom", tags=["Switch Room"])

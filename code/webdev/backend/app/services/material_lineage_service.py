@@ -126,36 +126,48 @@ def active_dispositions(dispositions: list[HumanDisposition]) -> list[HumanDispo
     return [d for d in dispositions if d.id not in superseded_ids]
 
 
+def validate_disposition(db: Session, delivery_id: str, payload: HumanDispositionCreate) -> ReceivingDelivery:
+    """Check a disposition against the delivery's state, unit, corrections and quantity, without writing."""
+    delivery = _get_delivery(db, delivery_id)
+    if delivery.status not in _DISPOSITION_OPEN:
+        raise DeliveryStateError(f"cannot record a disposition while delivery is {delivery.status}")
+    if payload.quantity_unit != delivery.quantity_unit:
+        raise QuantityValidationError(
+            f"unit {payload.quantity_unit} does not match delivery unit {delivery.quantity_unit}"
+        )
+
+    existing = _dispositions_of(db, delivery_id)
+    active = active_dispositions(existing)
+    if payload.supersedes_id is not None:
+        target = next((d for d in existing if d.id == payload.supersedes_id), None)
+        if target is None:
+            raise NotFoundError(f"disposition {payload.supersedes_id} not found on delivery {delivery_id}")
+        if target.id not in {d.id for d in active}:
+            raise QuantityValidationError(f"disposition {target.id} is already superseded")
+        active = [d for d in active if d.id != target.id]
+
+    active_total = sum(d.affected_quantity for d in active)
+    if active_total + payload.affected_quantity > delivery.stated_quantity + _EPS:
+        raise QuantityValidationError(
+            f"affected quantity {payload.affected_quantity} exceeds remaining quantity: "
+            f"stated {delivery.stated_quantity}, already dispositioned {active_total}"
+        )
+    return delivery
+
+
 def record_disposition(
-    db: Session, delivery_id: str, payload: HumanDispositionCreate, now: datetime | None = None
+    db: Session,
+    delivery_id: str,
+    payload: HumanDispositionCreate,
+    now: datetime | None = None,
+    extra: dict | None = None,
 ) -> HumanDisposition:
-    """Record a human disposition, optionally superseding an earlier one, within the stated quantity."""
+    """Record a human disposition, optionally superseding an earlier one, within the stated quantity.
+
+    ``extra`` sets additional columns (for example the Switch message that authorized it) in the same commit.
+    """
     with _LOCK:
-        delivery = _get_delivery(db, delivery_id)
-        if delivery.status not in _DISPOSITION_OPEN:
-            raise DeliveryStateError(f"cannot record a disposition while delivery is {delivery.status}")
-        if payload.quantity_unit != delivery.quantity_unit:
-            raise QuantityValidationError(
-                f"unit {payload.quantity_unit} does not match delivery unit {delivery.quantity_unit}"
-            )
-
-        existing = _dispositions_of(db, delivery_id)
-        active = active_dispositions(existing)
-        if payload.supersedes_id is not None:
-            target = next((d for d in existing if d.id == payload.supersedes_id), None)
-            if target is None:
-                raise NotFoundError(f"disposition {payload.supersedes_id} not found on delivery {delivery_id}")
-            if target.id not in {d.id for d in active}:
-                raise QuantityValidationError(f"disposition {target.id} is already superseded")
-            active = [d for d in active if d.id != target.id]
-
-        active_total = sum(d.affected_quantity for d in active)
-        if active_total + payload.affected_quantity > delivery.stated_quantity + _EPS:
-            raise QuantityValidationError(
-                f"affected quantity {payload.affected_quantity} exceeds remaining quantity: "
-                f"stated {delivery.stated_quantity}, already dispositioned {active_total}"
-            )
-
+        delivery = validate_disposition(db, delivery_id, payload)
         disposition = HumanDisposition(
             delivery_id=delivery_id,
             output_lot_id=payload.output_lot_id,
@@ -166,6 +178,7 @@ def record_disposition(
             authorized_by=payload.authorized_by,
             decided_at=now or utcnow(),
             supersedes_id=payload.supersedes_id,
+            **(extra or {}),
         )
         db.add(disposition)
         if delivery.status == DeliveryStatus.INSPECTION_COMPLETE.value:
@@ -175,49 +188,58 @@ def record_disposition(
         return disposition
 
 
+def validate_movement(db: Session, delivery_id: str, payload: MaterialMovementCreate) -> ReceivingDelivery:
+    """Check a movement's state, unit, input reference, output lot and overdraw, without writing."""
+    delivery = _get_delivery(db, delivery_id)
+    if delivery.status != DeliveryStatus.DISPOSITION_RECORDED.value:
+        raise DeliveryStateError(f"cannot record a stage while delivery is {delivery.status}")
+    if payload.quantity_unit != delivery.quantity_unit:
+        raise QuantityValidationError(
+            f"unit {payload.quantity_unit} does not match delivery unit {delivery.quantity_unit}"
+        )
+
+    if payload.stage.startswith("receiving_"):
+        if payload.input_ref != delivery_id:
+            raise QuantityValidationError(f"receiving stages must take input_ref {delivery_id}")
+        available = delivery.stated_quantity
+    else:
+        source = db.scalar(
+            select(MaterialMovement).where(
+                MaterialMovement.delivery_id == delivery_id,
+                MaterialMovement.output_lot_id == payload.input_ref,
+            )
+        )
+        if source is None:
+            raise QuantityValidationError(f"unknown input_ref {payload.input_ref}")
+        available = source.quantity_out
+
+    if _producer(db, payload.output_lot_id) is not None:
+        raise QuantityValidationError(f"output lot {payload.output_lot_id} already exists")
+
+    consumed = db.scalar(
+        select(func.coalesce(func.sum(MaterialMovement.quantity_in), 0.0)).where(
+            MaterialMovement.delivery_id == delivery_id,
+            MaterialMovement.input_ref == payload.input_ref,
+        )
+    )
+    if consumed + payload.quantity_in > available + _EPS:
+        raise QuantityValidationError(
+            f"overdraw: {payload.input_ref} has {available} available, "
+            f"{consumed} already consumed, {payload.quantity_in} requested"
+        )
+    return delivery
+
+
 def record_transformation_stage(
-    db: Session, delivery_id: str, payload: MaterialMovementCreate, now: datetime | None = None
+    db: Session,
+    delivery_id: str,
+    payload: MaterialMovementCreate,
+    now: datetime | None = None,
+    extra: dict | None = None,
 ) -> MaterialMovement:
     """Record one material movement, enforcing that no input is overdrawn."""
     with _LOCK:
-        delivery = _get_delivery(db, delivery_id)
-        if delivery.status != DeliveryStatus.DISPOSITION_RECORDED.value:
-            raise DeliveryStateError(f"cannot record a stage while delivery is {delivery.status}")
-        if payload.quantity_unit != delivery.quantity_unit:
-            raise QuantityValidationError(
-                f"unit {payload.quantity_unit} does not match delivery unit {delivery.quantity_unit}"
-            )
-
-        if payload.stage.startswith("receiving_"):
-            if payload.input_ref != delivery_id:
-                raise QuantityValidationError(f"receiving stages must take input_ref {delivery_id}")
-            available = delivery.stated_quantity
-        else:
-            source = db.scalar(
-                select(MaterialMovement).where(
-                    MaterialMovement.delivery_id == delivery_id,
-                    MaterialMovement.output_lot_id == payload.input_ref,
-                )
-            )
-            if source is None:
-                raise QuantityValidationError(f"unknown input_ref {payload.input_ref}")
-            available = source.quantity_out
-
-        if _producer(db, payload.output_lot_id) is not None:
-            raise QuantityValidationError(f"output lot {payload.output_lot_id} already exists")
-
-        consumed = db.scalar(
-            select(func.coalesce(func.sum(MaterialMovement.quantity_in), 0.0)).where(
-                MaterialMovement.delivery_id == delivery_id,
-                MaterialMovement.input_ref == payload.input_ref,
-            )
-        )
-        if consumed + payload.quantity_in > available + _EPS:
-            raise QuantityValidationError(
-                f"overdraw: {payload.input_ref} has {available} available, "
-                f"{consumed} already consumed, {payload.quantity_in} requested"
-            )
-
+        validate_movement(db, delivery_id, payload)
         movement = MaterialMovement(
             delivery_id=delivery_id,
             input_ref=payload.input_ref,
@@ -232,6 +254,7 @@ def record_transformation_stage(
             operator_id=payload.operator_id,
             timestamp=now or utcnow(),
             notes=payload.notes,
+            **(extra or {}),
         )
         db.add(movement)
         db.commit()

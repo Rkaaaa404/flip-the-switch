@@ -20,6 +20,7 @@ from fastapi import (
 from sqlalchemy import case, func, select
 from sqlalchemy.orm import Session, selectinload
 
+from app.api.auth import require_gate_token
 from app.api.deps import get_db
 from app.config import settings
 from app.core.database import SessionLocal
@@ -264,7 +265,9 @@ async def capture_view(
     response_model=HumanDispositionRead,
     status_code=status.HTTP_201_CREATED,
     summary="Record Human Disposition",
-    description="Records an accept, reject, reprocess or downgrade decision within the delivery quantity.",
+    description="Records an accept, reject, reprocess or downgrade decision. Gate token only: people sign "
+    "dispositions in the Switch room through qc-gate.",
+    dependencies=[Depends(require_gate_token)],
 )
 def record_disposition(delivery_id: str, payload: HumanDispositionCreate, db: Session = Depends(get_db)):
     with _service_errors():
@@ -277,7 +280,9 @@ def record_disposition(delivery_id: str, payload: HumanDispositionCreate, db: Se
     response_model=MaterialMovementRead,
     status_code=status.HTTP_201_CREATED,
     summary="Record Material Movement",
-    description="Records one transformation or handoff stage, enforcing that no input is overdrawn.",
+    description="Records one transformation or handoff stage. Gate token only: operators confirm "
+    "movements in the Switch room through qc-gate.",
+    dependencies=[Depends(require_gate_token)],
 )
 def record_movement(delivery_id: str, payload: MaterialMovementCreate, db: Session = Depends(get_db)):
     with _service_errors():

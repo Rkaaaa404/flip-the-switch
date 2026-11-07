@@ -205,6 +205,8 @@ class HumanDispositionRead(BaseModel):
     decided_at: datetime
     supersedes_id: int | None
     superseded: bool = False
+    authorized_via: str | None = None
+    switch_message_id: str | None = None
 
 
 class MaterialMovementRead(BaseModel):
@@ -224,6 +226,8 @@ class MaterialMovementRead(BaseModel):
     operator_id: str
     timestamp: datetime
     notes: str | None
+    authorized_via: str | None = None
+    switch_message_id: str | None = None
 
 
 class StorageSlotRef(BaseModel):
