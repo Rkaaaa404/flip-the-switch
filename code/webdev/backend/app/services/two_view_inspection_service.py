@@ -33,6 +33,8 @@ from app.services.errors import (
 )
 
 PAIRING_TIMEOUT_SECONDS = 3.0
+# Midpoint of the 0.8-1.5 s passive-inverter transit between Sensor 1 and Sensor 2.
+EXPECTED_TRANSIT_SECONDS = 1.15
 SUPPORTED_FAMILIES = {"Scombridae", "Cichlidae", "Salmonidae"}
 MAX_PENDING = 8
 _INFER_SEM = asyncio.Semaphore(4)
@@ -183,7 +185,13 @@ def _resolve_fish(
         )
         .order_by(FishInspection.sequence_in_delivery)
     ).all()
-    fish = next((c for c in candidates if not _has_view(c, "ventral")), None)
+    # Pick the dorsal whose age best matches the expected transit, not simply the oldest:
+    # a dropped ventral must not shift every later fish's ventral onto its predecessor.
+    fish = min(
+        candidates,
+        key=lambda c: abs((now - c.created_at).total_seconds() - EXPECTED_TRANSIT_SECONDS),
+        default=None,
+    )
     if fish is not None:
         fish.status = InspectionStatus.COMPLETE.value
         return fish
@@ -211,6 +219,7 @@ async def handle_view_capture(
 ) -> FishInspection:
     """Run inference on one view, pair it with its fish, and persist the image and results."""
     global _pending
+    now = now or utcnow()  # trigger time, taken before inference so model latency doesn't skew pairing
 
     delivery = db.get(ReceivingDelivery, delivery_id)
     if delivery is None:
@@ -238,7 +247,6 @@ async def handle_view_capture(
         _pending -= 1
 
     async with _WRITE_LOCK:
-        now = now or utcnow()
         reap_timed_out_captures(db, delivery_id, now=now)
         fish = _resolve_fish(db, delivery_id, view_side, sequence_in_delivery, now)
 

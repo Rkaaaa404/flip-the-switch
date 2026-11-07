@@ -135,6 +135,36 @@ def test_two_view_normal_pairing(db, make_delivery, jpeg_bytes):
         assert os.path.isfile(on_disk)
 
 
+def test_dropped_ventral_does_not_shift_later_pairings(db, make_delivery, jpeg_bytes):
+    """Regression (BLK-02): fish 2 loses its ventral; fish 3's ventral must pair with fish 3, not fish 2."""
+    delivery = make_delivery(db, now=T0)
+    s = lambda sec: T0 + timedelta(seconds=sec)
+    _capture(db, delivery.id, "dorsal", jpeg_bytes, now=s(0.0))
+    _capture(db, delivery.id, "ventral", jpeg_bytes, now=s(1.1))
+    _capture(db, delivery.id, "dorsal", jpeg_bytes, now=s(2.2))  # fish 2: ventral never arrives
+    _capture(db, delivery.id, "dorsal", jpeg_bytes, now=s(3.4))
+    paired = _capture(db, delivery.id, "ventral", jpeg_bytes, now=s(4.5))
+    assert paired.sequence_in_delivery == 3
+
+    reap_timed_out_captures(db, delivery.id, now=s(6.0))
+    rows = db.scalars(select(FishInspection).order_by(FishInspection.sequence_in_delivery)).all()
+    assert [r.status for r in rows] == [
+        InspectionStatus.COMPLETE.value,
+        InspectionStatus.PARTIAL_DORSAL_ONLY.value,
+        InspectionStatus.COMPLETE.value,
+    ]
+    assert json.loads(rows[1].flag_reasons_json) == ["missing_ventral_view"]
+
+
+def test_two_fish_in_flight_pair_in_order(db, make_delivery, jpeg_bytes):
+    delivery = make_delivery(db, now=T0)
+    s = lambda sec: T0 + timedelta(seconds=sec)
+    _capture(db, delivery.id, "dorsal", jpeg_bytes, now=s(0.0))
+    _capture(db, delivery.id, "dorsal", jpeg_bytes, now=s(0.5))
+    assert _capture(db, delivery.id, "ventral", jpeg_bytes, now=s(1.15)).sequence_in_delivery == 1
+    assert _capture(db, delivery.id, "ventral", jpeg_bytes, now=s(1.65)).sequence_in_delivery == 2
+
+
 def test_two_view_timeout_partial_fallback(db, make_delivery, jpeg_bytes):
     delivery = make_delivery(db, now=T0)
     dorsal = _capture(db, delivery.id, "dorsal", jpeg_bytes, now=T0)
