@@ -262,8 +262,6 @@ python code/switch/gate/main.py
 > [!IMPORTANT]
 > **Visual screening only.** The model flags what it sees. It never calls a fish safe or diseased, and the agent is told not to either.
 
-- 🩹 **The detector mislabels the open ulcer** in `hf_00811` as a red lesion instead of an open wound. The demo keeps it on purpose: the model screens, the person decides.
-- 🏷️ The defect model was trained with Indonesian class ids (`sisik_sisa`, `warna_abnormal`, `luka_robekan`, `lendir_berlebih`). They stay as stored ids; the chat, photos and dashboard show them in English as scale damage, red lesion, open wound and excess mucus.
 - 👁️ Freshness grades come from eye and gill images. Species outside the model's scope come back `UNSUPPORTED` and count as unscreened.
 - 💬 The gate uses Switch's custom-agent API with long polling. Because it is registered as a passive agent, Switch posts a short "I read room messages asynchronously" line before each receipt.
 - 🧪 Demo data is synthetic (supplier, truck, quantities). The fish images are real.
