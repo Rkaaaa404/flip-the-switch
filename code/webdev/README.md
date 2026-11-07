@@ -161,8 +161,9 @@ code/webdev/
 
 ## Team
 
-- Praditya Haekal Islami A.H
-- Evan Christian N.
-- Jonathan Zelig Sutopo
-- Rayka Dharma P.
+Team 4 IT Goes International:
+
+- Rayka Dharma Pranandita
+- Naufal Ardhana
+- Evan Christian Nainggolan
 - Rayhan Agnan Kusuma

@@ -171,4 +171,11 @@ flip-the-switch/
 
 ## Credits
 
-Built by Praditya Haekal Islami A.H, Evan Christian N., Jonathan Zelig Sutopo, Rayka Dharma P. and Rayhan Agnan Kusuma, with Switch and Wispr Flow. Demo voiceover and music: [ElevenLabs](https://elevenlabs.io).
+Built by **Team 4 IT Goes International**, with Switch and Wispr Flow:
+
+- Rayka Dharma Pranandita
+- Naufal Ardhana
+- Evan Christian Nainggolan
+- Rayhan Agnan Kusuma
+
+Demo voiceover and music: [ElevenLabs](https://elevenlabs.io).
