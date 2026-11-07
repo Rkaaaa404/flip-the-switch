@@ -7,7 +7,6 @@
 .env.test.local
 .env.production.local
 !.env.example
-context/
 # ==========================================
 # Python & Bytecode (CPython / PyCache)
 # ==========================================

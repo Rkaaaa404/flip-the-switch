@@ -235,8 +235,8 @@ Metode ini memungkinkan dewan juri menjalankan keseluruhan sistem (Backend FastA
 
 1. **Clone Repositori:**
 ```bash
-git clone https://github.com/EvanCN10/nusaqc.git
-cd nusaqc
+git clone https://github.com/Rkaaaa404/flip-the-switch.git
+cd flip-the-switch/code/webdev
 ```
 
 2. **Jalankan Aplikasi dengan Docker Compose:**

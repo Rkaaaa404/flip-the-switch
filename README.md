@@ -34,20 +34,20 @@ flip-the-switch/
 │       ├── legacy-nusaqc/                    # Historical proposals, plans, and research
 │       ├── past-comp-idea/                   # Prior competition baseline documents
 │       └── other-idea/                       # Candidate concepts evaluated during intake
-└── code/
-    ├── webdev/                    # Core web application repository (Git: Rkaaaa404/flip-the-switch)
-    │   ├── backend/               # FastAPI backend, SQLite persistence, AI engine & controllers
-    │   ├── frontend/              # Next.js React dashboard, QC review workspaces, Tailwind UI
-    │   └── docker-compose.yml     # Container orchestration for backend & frontend
-    ├── edge/                      # Raspberry Pi edge runtime, GPIO drivers & camera server
-    └── models/                    # Vision model weights (ONNX), quantization & datasets
+└── code/                            # Monorepo codebase (tracked directly in flip-the-switch)
+    ├── webdev/                      # Core web application (FastAPI backend + Next.js frontend)
+    │   ├── backend/                 # FastAPI backend, SQLite persistence, AI engine & controllers
+    │   ├── frontend/                # Next.js React dashboard, QC review workspaces, Tailwind UI
+    │   └── docker-compose.yml       # Container orchestration for backend & frontend
+    ├── edge/                        # Raspberry Pi edge runtime, GPIO drivers & camera server
+    └── models/                      # Vision model weights (ONNX), quantization & datasets
 ```
 
 ---
 
 ## Core Application Codebase (`code/webdev/`)
 
-The primary software application is located in `code/webdev/` and tracked under GitHub repository [`Rkaaaa404/flip-the-switch`](https://github.com/Rkaaaa404/flip-the-switch) (private).
+The primary software application is located in `code/webdev/` and tracked directly as part of this unified GitHub repository [`Rkaaaa404/flip-the-switch`](https://github.com/Rkaaaa404/flip-the-switch) (private).
 
 ### Backend (`code/webdev/backend/`)
 * **Framework**: FastAPI (Python 3.11+) with SQLAlchemy ORM and SQLite persistence (`nusaqc.db`).
