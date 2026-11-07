@@ -85,8 +85,6 @@ def autodiscover_dafif_dataset() -> Optional[Path]:
         Path("models/datasets/mobilenet"),
         Path("../models/datasets/model-1/DaFiF"),
         Path("../../models/datasets/model-1/DaFiF"),
-        Path("D:/main/Documents/explore/compe/hackhathon/AIC/models/datasets/model-1/DaFiF"),
-        Path("D:/main/Documents/explore/compe/hackhathon/AIC/models/datasets/mobilenet"),
     ]
     for c in candidates:
         if c.exists() and any(c.rglob("*.jpg")):

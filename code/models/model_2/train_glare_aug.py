@@ -73,7 +73,6 @@ def autodiscover_model2_dataset() -> Optional[Path]:
         Path("models/datasets/model-2/roboflow-fish-disease"),
         Path("../models/datasets/yolo8s"),
         Path("../../models/datasets/yolo8s"),
-        Path("D:/main/Documents/explore/compe/hackhathon/AIC/models/datasets/yolo8s")
     ]
     for c in candidates:
         if c.exists() and ((c / "train" / "images").exists() or (c / "valid" / "images").exists()):

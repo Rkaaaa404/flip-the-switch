@@ -46,7 +46,6 @@ def autodiscover_fp32_model() -> Optional[Path]:
         Path("AI/model-2/nusaqc_model2_defect_detector.onnx"),
         Path("../webdev/backend/models_weights/nusaqc_model2_defect_detector.onnx"),
         Path("../../webdev/backend/models_weights/nusaqc_model2_defect_detector.onnx"),
-        Path("D:/main/Documents/explore/compe/hackhathon/AIC/webdev/backend/models_weights/nusaqc_model2_defect_detector.onnx"),
     ]
     for c in candidates:
         if c.exists() and c.stat().st_size > 30 * 1024 * 1024:  # > 30 MB means FP32

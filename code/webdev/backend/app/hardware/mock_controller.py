@@ -8,7 +8,7 @@ from app.hardware.controller import BaseHardwareController
 class MockHardwareController(BaseHardwareController):
     """
     Simulated Hardware Controller for local laptop development, Docker containers,
-    and COMPFEST judge evaluation without physical Raspberry Pi GPIO pins.
+    and local hackathon evaluation without physical Raspberry Pi GPIO pins.
     """
 
     def __init__(self):

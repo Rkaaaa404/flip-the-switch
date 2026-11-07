@@ -1,7 +1,7 @@
 # NusaQC — AI-Powered Visual Quality Control & Digital Traceability System
 
-[![COMPFEST 18](https://img.shields.io/badge/AIC-COMPFEST%2018%20(2026)-0284c7?style=flat-square)](https://compfest.id)
-[![Track](https://img.shields.io/badge/Track-Smart%20Manufacturing-16a34a?style=flat-square)](https://compfest.id)
+[![Hackathon](https://img.shields.io/badge/Hackathon-Flip%20the%20Switch-ff6b00?style=flat-square)](#)
+[![Track](https://img.shields.io/badge/Track-Smart%20Manufacturing%20%26%20Traceability-16a34a?style=flat-square)](#)
 [![Architecture](https://img.shields.io/badge/Architecture-Dual--Model%20ONNX%20Edge%20Inference-8b5cf6?style=flat-square)](https://onnxruntime.ai/)
 [![Docker](https://img.shields.io/badge/Container-Docker%20Compose-2563eb?style=flat-square)](https://docker.com)
 [![Status](https://img.shields.io/badge/MVP%20Status-Ready%20for%20Evaluation-emerald?style=flat-square)](#)
@@ -20,9 +20,8 @@
 6. [Struktur Repositori](#struktur-repositori)
 7. [Panduan Pengaturan & Instalasi (Setup Guide)](#panduan-pengaturan--instalasi-setup-guide)
 8. [Spesifikasi Kontrak REST API & WebSocket](#spesifikasi-kontrak-rest-api--websocket)
-9. [Panduan Verifikasi & Simulasi Pengujian Juri](#panduan-verifikasi--simulasi-pengujian-juri)
-10. [Kepatuhan terhadap Rulebook AIC COMPFEST 18](#kepatuhan-terhadap-rulebook-aic-compfest-18)
-11. [Tim Pengembang](#tim-pengembang)
+9. [Panduan Verifikasi & Simulasi Pengujian](#panduan-verifikasi--simulasi-pengujian)
+10. [Tim Pengembang](#tim-pengembang)
 
 ---
 
@@ -338,10 +337,10 @@ Semua endpoint backend terdokumentasi interaktif di Swagger UI (`http://localhos
 
 ---
 
-<a id="panduan-verifikasi--simulasi-pengujian-juri"></a>
-## 🧪 Panduan Verifikasi & Simulasi Pengujian Juri
+<a id="panduan-verifikasi--simulasi-pengujian"></a>
+## 🧪 Panduan Verifikasi & Simulasi Pengujian
 
-Dewan juri dapat memverifikasi seluruh fitur sistem secara langsung melalui antarmuka web:
+Pengguna dan evaluator dapat memverifikasi seluruh fitur sistem secara langsung melalui antarmuka web:
 
 1. **Uji Kasus 1: Inspeksi Ikan Segar (PASS)**
    - Buka menu **Inspection** di [http://localhost:3000/inspection](http://localhost:3000/inspection).
@@ -362,19 +361,6 @@ Dewan juri dapat memverifikasi seluruh fitur sistem secara langsung melalui anta
    - Buka menu **Export Dispatch** di [http://localhost:3000/dispatch](http://localhost:3000/dispatch).
    - Klik tombol **"+ New Dispatch"**, masukkan nama buyer (misal: *Seatrade Japan Co.*), pilih negara tujuan, dan centang lot yang telah dialokasikan di storage.
    - Klik **"Create Dispatch"** dan verifikasi data pengiriman berhasil dibuat serta dapat diunduh via tombol **"Export CSV"**.
-
----
-
-<a id="kepatuhan-terhadap-rulebook-aic-compfest-18"></a>
-## 🛡️ Kepatuhan terhadap Rulebook AIC COMPFEST 18
-
-Sistem NusaQC dirancang dengan mematuhi secara ketat seluruh batasan teknis **Babak Penyisihan**:
-
-1. **Batasan Pemrosesan Sinkron (*Synchronous Snapshot*):** Inferensi AI dijalankan per pemicu snapshot citra tunggal, tanpa antrean background streaming yang melanggar batasan MVP penyisihan.
-2. **Kemandirian Database Lokal:** Menggunakan SQLite zero-config yang tertanam di dalam container tanpa membutuhkan kluster basis data terdistribusi eksternal.
-3. **Optimasi CPU & Portabilitas:** Seluruh model AI dieksekusi via ONNX Runtime CPU dengan bobot statis (*frozen weights*), memastikan sistem dapat berjalan lancar di berbagai mesin penguji tanpa GPU khusus.
-4. **Kepatuhan Aturan Penilaian Anonim (*Blind Judging*):** Seluruh kode program, skema data, antarmuka pengguna, dan berkas dokumentasi telah dibersihkan dari logo, nama, maupun identitas perguruan tinggi.
-5. **Integritas Ilmiah:** Memfokuskan cakupan deteksi mutu murni pada parameter fisik visual (*filthy*) dan organoleptik mata/insang sesuai batasan teknologi Computer Vision.
 
 ---
 

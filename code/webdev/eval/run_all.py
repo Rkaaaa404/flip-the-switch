@@ -1,6 +1,6 @@
 """
 Master Orchestrator & Test Suite Runner (eval/run_all.py)
-Executes all 6 test suites for COMPFEST 18 AI Innovation Challenge (AIC),
+Executes all 6 test suites for NusaQC Flip the Switch Hackathon evaluation,
 aggregates current results into summary JSON, and generates the evaluation report table.
 """
 

@@ -127,7 +127,7 @@ Pastikan backend mengembalikan response JSON dengan nama field yang **identik** 
 
 ## Conventional Commits
 
-Semua commit **wajib** mengikuti format berikut (sesuai ketentuan rulebook COMPFEST 18):
+Semua commit **wajib** mengikuti format Conventional Commits berikut:
 
 ```
 feat: <deskripsi>     → penambahan fitur atau fungsionalitas baru

@@ -1,7 +1,7 @@
 """
 NusaQC Evaluation Suite Utilities
 Shared mathematical metrics, dataset helpers, synthetic image augmentations,
-and terminal report formatting for COMPFEST 18 evaluation track.
+and terminal report formatting for NusaQC evaluation track.
 """
 
 import os
