@@ -3,7 +3,7 @@
 import React from "react";
 import { Check, X, AlertTriangle, Clock, ShieldCheck, Sparkles, Inbox } from "lucide-react";
 import { TowerLight } from "@/components/common/TowerLight";
-import { InspectionResult } from "@/types";
+import { InspectionResult, defectName } from "@/types";
 
 interface ResultSectionProps {
   result?: InspectionResult | null;
@@ -15,14 +15,14 @@ const decisionConfig: Record<string, { bg: string; text: string; border: string;
     bg: "bg-green-50",
     text: "text-green-700",
     border: "border-green-300",
-    label: "PASS (Lolos Mutu)",
+    label: "PASS (Meets Quality)",
     icon: <Check className="size-6 text-green-700 stroke-[3]" />,
   },
   CONDITIONAL: {
     bg: "bg-amber-50",
     text: "text-amber-700",
     border: "border-amber-300",
-    label: "CONDITIONAL (Verifikasi Operator)",
+    label: "CONDITIONAL (Operator Check)",
     icon: <AlertTriangle className="size-6 text-amber-700 stroke-[2.5]" />,
   },
   FAIL: {
@@ -79,7 +79,7 @@ export const ResultSection = ({ result, isLoading = false }: ResultSectionProps)
         <div className="max-w-xs">
           <h3 className="text-base font-bold font-sans text-zinc-900">Menunggu Sampel Inspeksi</h3>
           <p className="text-xs font-sans text-gray-500 mt-1">
-            Unggah citra ikan atau pilih sampel demo di panel sebelah kiri, lalu klik &quot;Jalankan Inspeksi AI&quot;.
+            Upload a fish image or pick a demo sample on the left, then click &quot;Run AI Inspection&quot;.
           </p>
         </div>
       </div>
@@ -93,7 +93,7 @@ export const ResultSection = ({ result, isLoading = false }: ResultSectionProps)
         <div className="size-14 rounded-full bg-sky-100 flex items-center justify-center text-sky-500">
           <Sparkles className="size-7 animate-spin" />
         </div>
-        <p className="text-sm font-bold font-sans text-sky-800">Sedang Menganalisis Citra Ikan...</p>
+        <p className="text-sm font-bold font-sans text-sky-800">Analyzing the Fish Image...</p>
         <p className="text-xs font-mono text-gray-400">Menghitung matriks kesegaran & lokalisasi cacat visual</p>
       </div>
     );
@@ -187,7 +187,7 @@ export const ResultSection = ({ result, isLoading = false }: ResultSectionProps)
             Defect Detection (Model 2 YOLOv8s)
           </h3>
           <span className="text-xs font-mono font-semibold px-2 py-0.5 bg-slate-100 rounded-sm text-gray-700">
-            {result.defects?.length || 0} Cacat Terdeteksi
+            {result.defects?.length || 0} Defects Detected
           </span>
         </div>
 
@@ -209,7 +209,7 @@ export const ResultSection = ({ result, isLoading = false }: ResultSectionProps)
                   key={`${defect.label}-${index}`}
                   className={`px-3 py-1.5 rounded-md border ${bStyle.border} ${bStyle.bg} flex items-center gap-1.5 text-xs font-mono ${bStyle.text}`}
                 >
-                  <span className="font-bold">{defect.label}</span>
+                  <span className="font-bold">{defectName(defect.label)}</span>
                   <span className="opacity-75 font-semibold">({defConf}%)</span>
                 </div>
               );
@@ -217,7 +217,7 @@ export const ResultSection = ({ result, isLoading = false }: ResultSectionProps)
           ) : (
             <div className="p-3 w-full bg-emerald-50 border border-emerald-200 rounded-md text-xs font-sans text-emerald-800 flex items-center gap-2">
               <Check className="size-4 text-emerald-600" />
-              <span>Tidak ada cacat atau penyakit permukaan yang terdeteksi (Permukaan Bersih).</span>
+              <span>No surface defects detected (clean surface).</span>
             </div>
           )}
         </div>
@@ -232,7 +232,7 @@ export const ResultSection = ({ result, isLoading = false }: ResultSectionProps)
           <span className="text-sm font-bold font-sans text-zinc-900">
             {signal === "GREEN" && "Conveyor Running (Lolos Sortir)"}
             {signal === "YELLOW" && "Conveyor Slow (Pemeriksaan Manual)"}
-            {signal === "RED" && "Conveyor Reject / Ejector Aktif"}
+            {signal === "RED" && "Conveyor Reject / Ejector Active"}
           </span>
         </div>
         <TowerLight signal={signal as "GREEN" | "YELLOW" | "RED"} />

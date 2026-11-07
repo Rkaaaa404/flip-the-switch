@@ -39,6 +39,12 @@ BACKEND_ENV = REPO / "code" / "webdev" / "backend" / ".env"
 DEFAULT_SWITCH_ENV = Path.home() / "AppData/Roaming/switchdash/local-switch-server/native/run/switch-core.env"
 DEFAULT_AGENT_DIR = Path.home() / ".switch/agents/localhost-57078/qc-agent"
 PEOPLE = {"qc.supervisor": "QC Supervisor", "floor.operator": "Floor Operator", "auditor": "Auditor"}
+ROOM_DESCRIPTION = "Receiving QC for incoming fish deliveries"
+ROOM_INSTRUCTIONS = (
+    "Receiving QC for incoming fish deliveries. qc-agent summarizes inspection runs, posts flagged photos and "
+    "drafts records. Only people sign, with `@qc-gate approve DP-n`, `@qc-gate reject DP-n <reason>`, "
+    "`@qc-gate confirm MV-n` or `@qc-gate status DEL-...`."
+)
 
 
 def read_env(path: Path) -> dict[str, str]:
@@ -96,6 +102,8 @@ def main() -> None:
     p.add_argument("--mattermost-team", default="switch")
     p.add_argument("--switch-env", type=Path, default=DEFAULT_SWITCH_ENV, help="holds GATEWAY_ADMIN_EMAIL/PASSWORD")
     p.add_argument("--room", default="receiving-qc")
+    p.add_argument("--fresh-room", action="store_true",
+                   help="archive the existing room of that name (reversible) and create a new, empty one")
     p.add_argument("--agent-dir", type=Path, default=DEFAULT_AGENT_DIR, help="qc-agent's Switch working folder")
     p.add_argument("--api-url", default="http://localhost:8000", help="NusaQC backend")
     a = p.parse_args()
@@ -149,8 +157,19 @@ def main() -> None:
     step(f"Room {a.room}")
     _, rooms, _ = sw.call("GET", "/gateway/rooms")
     room = next((r for r in items(rooms, "rooms", "items") if r.get("name") == a.room and not r.get("archived")), None)
+    if room is not None and a.fresh_room:
+        sw.call("POST", f"/gateway/rooms/{room['id']}/archive")
+        print(f"  archived old room {room['id']} (unarchive: POST /gateway/rooms/{room['id']}/unarchive)")
+        room = None
     if room is None:
-        raise SystemExit(f"no room named {a.room!r}: create it in Switch Console first")
+        _, agents, _ = sw.call("GET", "/gateway/agents")
+        if not any(x.get("name") == "qc-agent" for x in items(agents, "agents", "items")):
+            raise SystemExit("create the qc-agent Claude Code agent in Switch Console first")
+        _, room, _ = sw.call("POST", "/gateway/rooms", {
+            "name": a.room, "description": ROOM_DESCRIPTION, "instructions": ROOM_INSTRUCTIONS,
+            "agent_names": ["qc-agent"], "user_names": list(PEOPLE), "bridge_id": bridge,
+            "channel_type": "channel_public"})
+        print(f"  created room {room['id']} with qc-agent")
     sw.call("POST", f"/gateway/rooms/{room['id']}/users", {"user_names": list(PEOPLE)}, ok=(200, 201, 204, 409))
     print(f"  room {room['id']}: added {', '.join(PEOPLE)}")
 
@@ -174,6 +193,9 @@ def main() -> None:
             raise SystemExit(f"qc-gate {gate_id} exists but {gate_env} is missing; its API key is shown only once. "
                              "Delete the agent in Console and re-run.")
         print(f"  already registered: {gate_id}")
+        lines = [ln for ln in gate_env.read_text(encoding="utf-8").splitlines() if not ln.startswith("QC_ROOM_ID=")]
+        gate_env.write_text("\n".join(lines + [f"QC_ROOM_ID={room['id']}"]) + "\n", encoding="utf-8")
+        print(f"  QC_ROOM_ID={room['id']} written to {gate_env} (restart the relay to pick it up)")
     sw.call("POST", f"/gateway/rooms/{room['id']}/agents", {"agent_ids": [gate_id]}, ok=(200, 201, 204, 409))
     # Layer 1: in this room any plant user may address the gate, and no agent may (qc-agent included).
     sw.call("PUT", f"/gateway/agents/{gate_id}/addressing-policy",

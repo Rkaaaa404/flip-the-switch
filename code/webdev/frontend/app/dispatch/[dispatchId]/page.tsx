@@ -80,7 +80,7 @@ export default function DispatchDetailPage() {
       <div className="flex flex-col items-center justify-center p-20 gap-3">
         <Loader2 className="size-8 animate-spin text-sky-600" />
         <span className="text-sm font-semibold font-sans text-zinc-700">
-          Memuat Detail Manifes Pengiriman {dispatchId}...
+          Loading dispatch manifest {dispatchId}...
         </span>
       </div>
     );
@@ -91,13 +91,13 @@ export default function DispatchDetailPage() {
       <div className="p-12 flex flex-col items-center justify-center gap-4 text-center">
         <Inbox className="size-12 text-slate-300" />
         <h2 className="text-lg font-bold font-sans text-zinc-800">
-          Catatan Pengiriman Tidak Ditemukan
+          Dispatch Record Not Found
         </h2>
         <Link
           href="/dispatch"
           className="text-xs font-bold font-sans text-sky-600 hover:underline"
         >
-          ← Kembali ke Export Dispatch
+          ← Back to Export Dispatch
         </Link>
       </div>
     );
@@ -153,7 +153,7 @@ export default function DispatchDetailPage() {
               <thead>
                 <tr className="bg-slate-50 border-b border-slate-200">
                   <th className="px-3 py-2.5 text-left font-bold text-gray-600">Lot ID</th>
-                  <th className="px-3 py-2.5 text-left font-bold text-gray-600">Jenis Ikan</th>
+                  <th className="px-3 py-2.5 text-left font-bold text-gray-600">Fish Type</th>
                   <th className="px-3 py-2.5 text-center font-bold text-gray-600">Grade</th>
                   <th className="px-3 py-2.5 text-left font-bold text-gray-600">Defects</th>
                   <th className="px-3 py-2.5 text-left font-bold text-gray-600">Confidence</th>
@@ -164,7 +164,7 @@ export default function DispatchDetailPage() {
                 {lots.length === 0 ? (
                   <tr>
                     <td colSpan={6} className="px-3 py-8 text-center text-gray-400">
-                      Tidak ada detail lot tercatat.
+                      No lot details recorded.
                     </td>
                   </tr>
                 ) : (
@@ -326,7 +326,7 @@ export default function DispatchDetailPage() {
               <div className="pt-2 border-t border-slate-100 p-2.5 bg-emerald-50 rounded-sm border border-emerald-200 text-center">
                 <span className="text-xs font-bold font-sans text-emerald-800 flex items-center justify-center gap-1">
                   <Check className="size-4 text-emerald-600" />
-                  Pengiriman Telah Selesai & Diterima Buyer
+                  Shipment Delivered & Received by Buyer
                 </span>
               </div>
             )}

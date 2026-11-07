@@ -266,7 +266,7 @@ def get_lot_by_id(
         "defects": raw_defects,
         "inspector_note": record.inspector_note or "",
         "inspectorNote": record.inspector_note or "",
-        "reason_summary": record.reason_summary or ("Kualitas ikan memenuhi standar kelayakan ekspor (Grade " + record.grade + ")." if record.decision == "PASS" else ("Grade B dengan tingkat keyakinan moderat. Disarankan verifikasi visual operator." if record.decision == "CONDITIONAL" else "Terdeteksi defek fisik/kontaminasi pada permukaan ikan."))
+        "reason_summary": record.reason_summary or ("Fish meets the export quality standard (Grade " + record.grade + ")." if record.decision == "PASS" else ("Grade B with moderate confidence. Operator visual check recommended." if record.decision == "CONDITIONAL" else "Visible surface defects detected on the fish."))
     }
 
 

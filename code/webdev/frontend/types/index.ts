@@ -1,3 +1,17 @@
+/** English display names for the defect model's classes. The model and database keep the original ids. */
+export const DEFECT_LABEL_EN: Record<string, string> = {
+  sisik_sisa: "scale damage",
+  warna_abnormal: "red lesion",
+  luka_robekan: "open wound",
+  lendir_berlebih: "excess mucus",
+  mata_keruh: "cloudy eye",
+};
+
+/** Human-readable name for a defect class or flag reason id. */
+export function defectName(id: string): string {
+  return DEFECT_LABEL_EN[id] ?? id.replace(/_/g, " ");
+}
+
 export type Decision = "PASS" | "FAIL" | "CONDITIONAL";
 export type HardwareSignal = "GREEN" | "YELLOW" | "RED";
 export type Grade = "A" | "B" | "C";

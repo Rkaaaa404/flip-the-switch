@@ -63,10 +63,10 @@ export default function SettingsPage() {
         auto_export_csv: autoExportCSV,
         log_retention_days: Number(logRetention) || 7,
       });
-      setSaveMessage({ type: "success", text: "Pengaturan sistem berhasil disimpan ke backend!" });
+      setSaveMessage({ type: "success", text: "Settings saved to the backend." });
       setTimeout(() => setSaveMessage(null), 4000);
     } catch (err: any) {
-      setSaveMessage({ type: "error", text: "Gagal menyimpan pengaturan ke backend." });
+      setSaveMessage({ type: "error", text: "Could not save settings to the backend." });
     }
   };
 

@@ -84,7 +84,7 @@ export const CreateDispatchModal = ({
       return;
     }
     if (selectedLotIds.length === 0) {
-      setErrorMsg("Pilih minimal 1 lot ikan untuk pengiriman.");
+      setErrorMsg("Select at least one lot for the shipment.");
       return;
     }
 
@@ -108,7 +108,7 @@ export const CreateDispatchModal = ({
       onCreated();
       onClose();
     } catch (err: any) {
-      setErrorMsg(err?.message || "Gagal membuat catatan pengiriman.");
+      setErrorMsg(err?.message || "Could not create the dispatch record.");
     } finally {
       setIsSubmitting(false);
     }
@@ -242,11 +242,11 @@ export const CreateDispatchModal = ({
               {isLoadingLots ? (
                 <div className="p-6 flex flex-col items-center justify-center gap-2 text-gray-400">
                   <Loader2 className="size-5 animate-spin text-sky-600" />
-                  <span className="text-xs font-sans">Memuat lot yang tersedia...</span>
+                  <span className="text-xs font-sans">Loading available lots...</span>
                 </div>
               ) : availableLots.length === 0 ? (
                 <div className="p-6 text-center text-xs font-sans text-gray-500">
-                  Tidak ada lot yang tersimpan di storage saat ini. Lakukan inspeksi dan tempatkan ke storage terlebih dahulu.
+                  No lots are in storage right now. Inspect fish and place the lots in storage first.
                 </div>
               ) : (
                 availableLots.map((lot) => {

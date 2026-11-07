@@ -25,7 +25,7 @@ export const TitleDetail = ({ lotId }: TitleDetailProps) => {
       router.push("/history");
       router.refresh();
     } catch (err: any) {
-      setErrorMsg(err?.message || "Gagal menghapus rekaman lot.");
+      setErrorMsg(err?.message || "Could not delete the lot record.");
       setIsDeleting(false);
     }
   };
@@ -38,7 +38,7 @@ export const TitleDetail = ({ lotId }: TitleDetailProps) => {
           className="inline-flex self-start items-center gap-1.5 text-xs font-bold font-sans text-sky-600 hover:text-sky-800 transition-colors"
         >
           <ArrowLeft className="size-3.5" />
-          <span>Kembali ke Lot History</span>
+          <span>Back to Lot History</span>
         </Link>
 
         <div className="flex flex-wrap items-center justify-between gap-4">
@@ -57,7 +57,7 @@ export const TitleDetail = ({ lotId }: TitleDetailProps) => {
             className="flex items-center gap-1.5 px-3.5 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-300 rounded-sm font-bold text-xs font-sans transition-colors cursor-pointer shadow-xs"
           >
             <Trash2 className="size-4 text-rose-600" />
-            <span>Hapus Rekaman Lot</span>
+            <span>Delete Lot Record</span>
           </button>
         </div>
       </div>
@@ -72,7 +72,7 @@ export const TitleDetail = ({ lotId }: TitleDetailProps) => {
               </div>
               <div>
                 <h3 className="text-base font-bold font-sans text-zinc-900">
-                  Hapus Rekaman Lot Ini?
+                  Delete This Lot Record?
                 </h3>
                 <p className="text-xs font-mono font-semibold text-rose-700">
                   {lotId}
@@ -81,7 +81,7 @@ export const TitleDetail = ({ lotId }: TitleDetailProps) => {
             </div>
 
             <p className="text-xs font-sans text-gray-600 leading-relaxed">
-              Tindakan ini akan menghapus data audit inspeksi mutu, rekaman cacat mutu visual, dan mengosongkan alokasi slot penyimpanan terkait secara permanen.
+              This permanently deletes the inspection audit data and defect records, and clears the lot's storage slot.
             </p>
 
             {errorMsg && (
@@ -97,7 +97,7 @@ export const TitleDetail = ({ lotId }: TitleDetailProps) => {
                 disabled={isDeleting}
                 className="px-4 py-2 text-xs font-semibold font-sans text-gray-700 bg-slate-100 hover:bg-slate-200 rounded-sm transition-colors cursor-pointer disabled:opacity-50"
               >
-                Batal
+                Cancel
               </button>
               <button
                 type="button"
@@ -113,7 +113,7 @@ export const TitleDetail = ({ lotId }: TitleDetailProps) => {
                 ) : (
                   <>
                     <Trash2 className="size-3.5" />
-                    <span>Ya, Hapus Sekarang</span>
+                    <span>Yes, Delete Now</span>
                   </>
                 )}
               </button>

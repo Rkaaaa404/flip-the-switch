@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { runInspection } from "@/lib/api";
-import { InspectionResult } from "@/types";
+import { InspectionResult, defectName } from "@/types";
 
 export const FISH_TYPES = [
   { id: "Tuna", label: "Tuna (Thunnini / Tuna)" },
@@ -111,7 +111,7 @@ export const FishInspection = ({
 
     try {
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        throw new Error("Browser Anda tidak mendukung akses kamera langsung (WebRTC).");
+        throw new Error("Your browser doesn't support direct camera access (WebRTC).");
       }
 
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -128,11 +128,11 @@ export const FishInspection = ({
       setFacingMode(mode);
     } catch (err: any) {
       console.warn("Camera access error:", err);
-      let message = "Gagal mengakses kamera. Pastikan izin kamera telah diberikan.";
+      let message = "Could not access the camera. Check that camera permission is granted.";
       if (err.name === "NotAllowedError" || err.name === "PermissionDeniedError") {
-        message = "Akses kamera ditolak oleh browser. Mohon izinkan akses kamera di pengaturan browser.";
+        message = "The browser denied camera access. Allow camera access in the browser settings.";
       } else if (err.name === "NotFoundError" || err.name === "DevicesNotFoundError") {
-        message = "Kamera tidak terdeteksi pada perangkat ini.";
+        message = "No camera found on this device.";
       }
       setLocalError(message);
       setIsCameraActive(false);
@@ -176,7 +176,7 @@ export const FishInspection = ({
     canvas.toBlob(
       (blob) => {
         if (!blob) {
-          setLocalError("Gagal mengambil snapshot dari video feed.");
+          setLocalError("Could not take a snapshot from the video feed.");
           return;
         }
 
@@ -205,7 +205,7 @@ export const FishInspection = ({
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
-      setLocalError("Format berkas tidak valid. Harap pilih gambar JPG, PNG, atau WEBP.");
+      setLocalError("Invalid file format. Choose a JPG, PNG or WEBP image.");
       return;
     }
 
@@ -235,7 +235,7 @@ export const FishInspection = ({
 
   const handleRunInspection = async () => {
     if (!selectedFile && !previewUrl) {
-      setLocalError("Pilih, foto, atau unggah sampel ikan terlebih dahulu.");
+      setLocalError("Choose, photograph or upload a fish sample first.");
       return;
     }
 
@@ -251,13 +251,13 @@ export const FishInspection = ({
       }
 
       if (!fileToSend) {
-        throw new Error("Berkas gambar tidak ditemukan.");
+        throw new Error("Image file not found.");
       }
 
       const result = await runInspection(fileToSend, selectedFishType);
       onInspectionComplete?.(result);
     } catch (err: any) {
-      const msg = err?.message || "Gagal melakukan inspeksi AI. Pastikan backend aktif.";
+      const msg = err?.message || "AI inspection failed. Check that the backend is running.";
       setLocalError(msg);
       onError?.(msg);
     }
@@ -297,7 +297,7 @@ export const FishInspection = ({
             className="flex items-center gap-1.5 cursor-pointer text-xs text-red-600 border-red-200 hover:bg-red-50"
           >
             <X className="size-3.5" />
-            <span>Tutup Kamera</span>
+            <span>Close Camera</span>
           </Button>
         ) : null}
       </div>
@@ -335,7 +335,7 @@ export const FishInspection = ({
                 type="button"
                 onClick={handleToggleFacingMode}
                 className="p-2 bg-black/60 hover:bg-black/80 text-white rounded-full transition-colors cursor-pointer"
-                title="Ganti Kamera"
+                title="Switch Camera"
               >
                 <FlipHorizontal className="size-4" />
               </button>
@@ -343,7 +343,7 @@ export const FishInspection = ({
                 type="button"
                 onClick={stopCameraStream}
                 className="p-2 bg-black/60 hover:bg-black/80 text-white rounded-full transition-colors cursor-pointer"
-                title="Tutup Kamera"
+                title="Close Camera"
               >
                 <X className="size-4" />
               </button>
@@ -357,7 +357,7 @@ export const FishInspection = ({
                 className="flex items-center gap-2 px-6 py-2.5 bg-sky-600 hover:bg-sky-500 text-white font-bold text-sm font-sans rounded-full shadow-lg transition-all active:scale-95 cursor-pointer border-2 border-white"
               >
                 <Camera className="size-4.5 text-white" />
-                <span>Ambil Foto</span>
+                <span>Take Photo</span>
               </button>
             </div>
           </div>
@@ -404,7 +404,7 @@ export const FishInspection = ({
                       <span
                         className={`absolute -top-5 left-0 px-1.5 py-0.5 text-[10px] font-mono font-bold ${styleInfo.bg} ${styleInfo.text} rounded-xs shadow-sm whitespace-nowrap`}
                       >
-                        {defect.label} {(defect.confidence * 100).toFixed(0)}%
+                        {defectName(defect.label)} {(defect.confidence * 100).toFixed(0)}%
                       </span>
                     </div>
                   );
@@ -418,10 +418,10 @@ export const FishInspection = ({
             <div className="max-w-md flex flex-col items-center gap-4">
               <div>
                 <p className="text-base font-bold font-sans text-zinc-900">
-                  Ambil Snapshot Kamera atau Unggah Sampel
+                  Take a Camera Snapshot or Upload a Sample
                 </p>
                 <p className="text-xs font-normal font-sans text-gray-500 mt-1">
-                  Pilih metode pengambilan citra ikan untuk proses klasifikasi kesegaran dan deteksi cacat mutu.
+                  Choose how to capture the fish image for freshness grading and defect detection.
                 </p>
               </div>
 
@@ -443,10 +443,10 @@ export const FishInspection = ({
                   </div>
                   <div>
                     <span className="text-xs font-bold font-sans text-sky-900 block">
-                      Akses Kamera Feed
+                      Camera Feed
                     </span>
                     <span className="text-[10px] font-sans text-sky-700 block mt-0.5">
-                      Buka Web Camera & Ambil Foto
+                      Open the Webcam & Take a Photo
                     </span>
                   </div>
                 </button>
@@ -462,10 +462,10 @@ export const FishInspection = ({
                   </div>
                   <div>
                     <span className="text-xs font-bold font-sans text-zinc-900 block">
-                      Unggah Berkas Gambar
+                      Upload an Image File
                     </span>
                     <span className="text-[10px] font-sans text-gray-500 block mt-0.5">
-                      Pilih file JPEG/PNG/WEBP
+                      Choose a JPEG/PNG/WEBP file
                     </span>
                   </div>
                 </button>
@@ -499,7 +499,7 @@ export const FishInspection = ({
       <div className="flex items-end gap-4 pt-2 border-t border-slate-100">
         <div className="flex-1 flex flex-col gap-1">
           <label className="text-xs font-bold font-sans text-gray-700 tracking-wide">
-            Jenis Ikan (Fish Type Category)
+            Fish Type
           </label>
           <select
             value={selectedFishType}
@@ -538,7 +538,7 @@ export const FishInspection = ({
 
       {/* AI Governance Disclaimer */}
       <p className="text-[11px] text-gray-400 font-sans text-center italic">
-        AI adalah sistem pendukung keputusan QC, bukan pengganti mutlak penilaian akhir operator manusia.
+        The AI supports QC decisions. It does not replace the final judgment of a human operator.
       </p>
     </div>
   );

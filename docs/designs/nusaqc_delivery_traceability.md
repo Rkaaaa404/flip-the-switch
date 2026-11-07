@@ -47,7 +47,7 @@ The system must close these gaps without requiring individual-fish tracking hard
 *   Claiming or projecting specific financial savings.
 *   Recall Room containment (holds, dispatch blocks).
 
-> **Changed 2026-11-07.** Switch workflow design was a non-goal. It is now the write path for every disposition and movement: see *Signing through Switch* under Non-Functional Requirements and `docs/plans/2026-11-07_switch-integration-plan.md`.
+> **Changed 2026-11-07.** Switch workflow design was a non-goal. It is now the write path for every disposition and movement: see *Signing through Switch* under Non-Functional Requirements and the [main README](../../README.md).
 
 ## Open Questions
 

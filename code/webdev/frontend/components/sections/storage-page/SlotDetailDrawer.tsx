@@ -105,7 +105,7 @@ export const SlotDetailDrawer = ({
             {/* Fish Type */}
             <div className="flex flex-col">
               <span className="text-xs font-bold text-gray-400 uppercase tracking-wider">
-                JENIS IKAN
+                FISH TYPE
               </span>
               <span className="text-base font-semibold text-zinc-800 mt-0.5">
                 {fishFamily}

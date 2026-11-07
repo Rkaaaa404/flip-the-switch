@@ -14,7 +14,7 @@ import {
 } from "@/lib/api";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import type { Defect } from "@/types";
+import { defectName, type Defect } from "@/types";
 import type {
   DeliveryDetail,
   DeliveryStatus,
@@ -374,7 +374,7 @@ function BoxOverlay({ defect, width, height }: { defect: Defect; width: number; 
       }}
     >
       <span className="absolute left-0 top-0 whitespace-nowrap bg-orange-500 px-1 text-[10px] font-semibold text-white">
-        {defect.label} {Math.round(defect.confidence * 100)}%
+        {defectName(defect.label)} {Math.round(defect.confidence * 100)}%
       </span>
     </div>
   );
@@ -448,8 +448,8 @@ function InspectionRow({ inspection }: { inspection: FishInspection }) {
         <Pill tone={INSPECTION_STATUS_TONE[inspection.status]}>{inspection.status}</Pill>
         {inspection.flagged_for_review && <Pill tone="red">Flagged</Pill>}
         {inspection.flag_reasons.map((reason) => (
-          <Pill key={reason} tone="grey">
-            {reason}
+          <Pill key={reason} tone="grey" title={reason}>
+            {defectName(reason)}
           </Pill>
         ))}
         {warning && (

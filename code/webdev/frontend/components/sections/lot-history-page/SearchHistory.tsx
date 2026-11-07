@@ -4,7 +4,7 @@ import React from "react";
 import { Search, ChevronDown, Download, RotateCcw } from "lucide-react";
 
 const FISH_TYPES = [
-  { value: "all", label: "Semua Jenis Ikan" },
+  { value: "all", label: "All Fish Types" },
   { value: "Tuna", label: "Tuna" },
   { value: "Mackarel", label: "Mackarel" },
   { value: "Nila", label: "Nila" },
@@ -13,16 +13,16 @@ const FISH_TYPES = [
 const FAMILIES = FISH_TYPES;
 
 const GRADES = [
-  { value: "all", label: "Semua Grade Mutu" },
-  { value: "A", label: "Grade A (Prima / Ekspor)" },
-  { value: "B", label: "Grade B (Segar / Domestik)" },
-  { value: "C", label: "Grade C (Reject / Busuk)" },
+  { value: "all", label: "All Grades" },
+  { value: "A", label: "Grade A (Prime / Export)" },
+  { value: "B", label: "Grade B (Fresh / Domestic)" },
+  { value: "C", label: "Grade C (Reject / Spoiled)" },
 ];
 
 const DECISIONS = [
-  { value: "all", label: "Semua Keputusan" },
-  { value: "PASS", label: "PASS (Lolos Mutu)" },
-  { value: "CONDITIONAL", label: "CONDITIONAL (Verifikasi)" },
+  { value: "all", label: "All Decisions" },
+  { value: "PASS", label: "PASS (Meets Quality)" },
+  { value: "CONDITIONAL", label: "CONDITIONAL (Check)" },
   { value: "FAIL", label: "FAIL (Reject)" },
 ];
 
@@ -133,14 +133,14 @@ export const SearchHistory = ({
         <div className="flex flex-wrap items-center justify-between gap-3 w-full pt-1 border-t border-slate-100">
           {/* Date Range Picker */}
           <div className="flex items-center gap-2 bg-slate-50 rounded-sm outline outline-1 outline-slate-300 px-3 py-1.5 text-xs font-sans">
-            <span className="text-gray-600 font-medium">Dari:</span>
+            <span className="text-gray-600 font-medium">From:</span>
             <input
               type="date"
               value={dateFrom}
               onChange={(e) => onDateFromChange(e.target.value)}
               className="bg-transparent border-none text-xs font-mono text-zinc-900 focus:outline-none cursor-pointer"
             />
-            <span className="text-gray-600 font-medium ml-2">Sampai:</span>
+            <span className="text-gray-600 font-medium ml-2">To:</span>
             <input
               type="date"
               value={dateTo}

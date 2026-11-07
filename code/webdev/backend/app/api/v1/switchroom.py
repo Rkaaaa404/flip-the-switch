@@ -25,6 +25,13 @@ _BOX_COLOURS = {
     "luka_robekan": (255, 215, 0),
     "lendir_berlebih": (150, 60, 220),
 }
+# English names for the photo tags; the model and database keep the original class ids.
+_LABEL_EN = {
+    "sisik_sisa": "scale damage",
+    "warna_abnormal": "red lesion",
+    "luka_robekan": "open wound",
+    "lendir_berlebih": "excess mucus",
+}
 
 
 def _http(exc: DeliveryServiceError) -> HTTPException:
@@ -103,7 +110,7 @@ def annotated_view(view_id: int, db: Session = Depends(get_db)):
         x1, y1, x2, y2 = defect["bbox"]
         colour = _BOX_COLOURS.get(defect["label"], (255, 255, 0))
         draw.rectangle([x1, y1, x2, y2], outline=colour, width=width)
-        tag = f"{defect['label']} {defect['confidence']:.2f}"
+        tag = f"{_LABEL_EN.get(defect['label'], defect['label'])} {defect['confidence']:.2f}"
         draw.rectangle([x1, max(0, y1 - 12), x1 + 7 * len(tag), max(12, y1)], fill=colour)
         draw.text((x1 + 2, max(0, y1 - 12)), tag, fill=(0, 0, 0))
     buf = io.BytesIO()

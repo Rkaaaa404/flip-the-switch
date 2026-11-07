@@ -76,14 +76,14 @@ export default function StoragePage() {
         await assignStorageSlot(slot.slot_id, lotIdToAssign);
         setNotification({
           type: "success",
-          text: `Lot ${lotIdToAssign} berhasil ditempatkan ke Slot ${slot.slot_id}!`,
+          text: `Lot ${lotIdToAssign} placed in slot ${slot.slot_id}!`,
         });
         setPlacingLot(null);
         await loadData();
       } catch (err: any) {
         setNotification({
           type: "error",
-          text: err?.message || "Gagal menempatkan lot ke slot.",
+          text: err?.message || "Could not place the lot in the slot.",
         });
       } finally {
         setIsAssigning(false);
@@ -105,13 +105,13 @@ export default function StoragePage() {
       setActiveSlot(null);
       setNotification({
         type: "success",
-        text: `Slot ${slotId} berhasil dikosongkan!`,
+        text: `Slot ${slotId} cleared.`,
       });
       await loadData();
     } catch (err: any) {
       setNotification({
         type: "error",
-        text: err?.message || "Gagal mengosongkan slot.",
+        text: err?.message || "Could not clear the slot.",
       });
     } finally {
       setIsClearing(false);
@@ -177,7 +177,7 @@ export default function StoragePage() {
       {/* Zone Filter Toolbar */}
       <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-3 px-4 rounded-lg border border-slate-200 shadow-xs">
         <span className="text-xs font-bold text-slate-700 font-sans">
-          Filter Tampilan Zona:
+          Show zone:
         </span>
         <div className="flex items-center gap-2">
           <button
@@ -189,7 +189,7 @@ export default function StoragePage() {
                 : "bg-slate-100 text-slate-600 hover:bg-slate-200"
             }`}
           >
-            Semua Zona
+            All Zones
           </button>
           <button
             type="button"
@@ -222,7 +222,7 @@ export default function StoragePage() {
           <div className="flex items-center gap-2 text-sm font-sans font-medium">
             <Info className="size-5 shrink-0" />
             <span>
-              Placing: <strong className="font-mono">{placingLot.lotId || placingLot.lot_id}</strong> ({placingLot.fishFamily || placingLot.fish_family || "Tuna"}, Grade {placingLot.grade || "A"}) — Klik slot hijau yang kosong untuk menempatkan lot.
+              Placing: <strong className="font-mono">{placingLot.lotId || placingLot.lot_id}</strong> ({placingLot.fishFamily || placingLot.fish_family || "Tuna"}, Grade {placingLot.grade || "A"}) — Click an empty green slot to place the lot.
             </span>
           </div>
           <button
@@ -392,13 +392,13 @@ export default function StoragePage() {
           {isLoading ? (
             <div className="py-12 flex flex-col items-center justify-center gap-2 text-gray-400">
               <Loader2 className="size-6 animate-spin text-sky-600" />
-              <span className="text-xs font-sans">Memuat antrean...</span>
+              <span className="text-xs font-sans">Loading queue...</span>
             </div>
           ) : pendingLots.length === 0 ? (
             <div className="py-12 flex flex-col items-center justify-center gap-2 text-gray-400 text-center">
               <CheckCircle2 className="size-8 text-emerald-500" />
               <span className="text-xs font-bold font-sans text-zinc-700">
-                Semua lot PASS telah ditempatkan di slot!
+                All PASS lots are placed in slots.
               </span>
               <span className="text-[11px] font-sans text-gray-400">
                 Jalankan inspeksi baru di menu Inspection.

@@ -4,6 +4,12 @@
 
 Built for the *Flip the Switch* hackathon on top of NusaQC, an existing fish-QC vision system.
 
+### ▶ [Watch the demo video (2:41)](https://youtu.be/pCowvaHkD3s)
+
+[![NusaQC Receiving QC Room demo](https://img.youtube.com/vi/pCowvaHkD3s/hqdefault.jpg)](https://youtu.be/pCowvaHkD3s)
+
+The problem, the idea, then a real run in the Switch room: the agent screens a delivery, a supervisor decides in plain words, a named person signs (and the floor operator is refused), the floor reports yields, and the auditor traces a lot back to the truck.
+
 ## The problem
 
 A fish processor takes 500 kg of tilapia off a truck. A conveyor camera photographs each fish from above and below, and a vision model flags lesions, parasites and mucus. Someone then has to decide: accept, reject, reprocess or downgrade, how much, and why. Later, an auditor or a buyer asks which delivery a pallet came from and who approved it.
@@ -39,7 +45,7 @@ flowchart LR
     UI[Next.js dashboard<br/>read-only for decisions] --> DB
 ```
 
-1. **The inspection run ends.** The operator tells the room. `qc-agent` pulls the run and posts a summary: 5 fish, 1 missing its ventral view, 1 flagged `warna_abnormal` 0.86, 500 kg still undispositioned. It attaches the flagged fish's photo with the model's boxes drawn on.
+1. **The inspection run ends.** The operator tells the room. `qc-agent` pulls the run and posts a summary: 5 fish, 1 missing its ventral view, 1 flagged as a red lesion (0.86), 500 kg still undispositioned. It attaches the flagged fish's photo with the model's boxes drawn on.
 2. **The supervisor decides in plain words.** "Accept 450 kg as LOT-A, reprocess 50 for trimming, the lesion is local." The agent turns that into drafts **DP-1** and **DP-2** and posts the exact command to sign each. The drafts are validated against the quantity rules at draft time, but **nothing is recorded yet.**
 3. **A person signs.** `@qc-gate approve DP-1`. `qc-gate` passes the command to NusaQC with the **sender id Switch put on the message**. NusaQC maps that id to a plant role, checks the role may do this, applies the record and replies with a receipt naming the signer and the Switch message id.
    - If the floor operator tries it, the answer is ⛔ *floor_operator cannot approve dispositions*.
@@ -71,8 +77,9 @@ There are two layers of control. **Switch** decides who may address the gate. **
 | `code/webdev/backend/scripts/seed_demo.py` | Deterministic reset: 5 fish through the real two-view pipeline and the real models |
 | `code/webdev/backend/tests/test_switchroom.py` | Tokens, role refusal, replay, apply-time staleness, reject reasons, movement confirmation |
 | `code/webdev/frontend/app/deliveries/[id]/` | Delivery workspace and trace page: pending drafts with their sign command, Signed in Switch badges |
-| `docs/designs/nusaqc_delivery_traceability.md` | Design doc for the traceability feature |
-| `docs/plans/2026-11-07_switch-integration-plan.md` | The hackathon build plan |
+| `docs/designs/nusaqc_delivery_traceability.md` | Design doc for the traceability feature and the Switch write path |
+| `code/webdev/README.md` | Backend and dashboard: architecture, full API, how to run |
+| `code/models/model_1/`, `code/models/model_2/` | How the two vision models were trained, and their measured limits |
 
 ## Setup
 
@@ -109,6 +116,8 @@ There are two layers of control. **Switch** decides who may address the gate. **
 
    It reads the Switch admin login from Console's `switch-core.env` (override with `--switch-env`) and writes the gate's key to `code/switch/gate/.env`, which is gitignored. See `code/switch/gate/.env.example`.
 
+   Add `--fresh-room` to archive the existing `receiving-qc` room (reversible) and start an empty one. The script writes the new room id to `QC_ROOM_ID` in the gate's `.env`; restart the gate afterwards.
+
 5. **Seed the demo** and map the three Switch sender ids to plant roles.
 
    ```bash
@@ -140,7 +149,8 @@ There are two layers of control. **Switch** decides who may address the gate. **
 ## Limits
 
 - **Visual screening only.** The model flags what it sees. It never calls a fish safe or diseased, and the agent is told not to either.
-- **The detector mislabels the open ulcer** in `hf_00811` as `warna_abnormal` (red lesion) instead of `luka_robekan`. The demo keeps it on purpose: the model screens, the person decides.
+- **The detector mislabels the open ulcer** in `hf_00811` as a red lesion instead of an open wound. The demo keeps it on purpose: the model screens, the person decides.
+- The defect model was trained with Indonesian class ids (`sisik_sisa`, `warna_abnormal`, `luka_robekan`, `lendir_berlebih`). They stay as stored ids; the chat, photos and dashboard show them in English as scale damage, red lesion, open wound and excess mucus.
 - Freshness grades come from eye and gill images. Species outside the model's scope come back `UNSUPPORTED` and count as unscreened.
 - The gate uses Switch's custom-agent API with long polling. Because it is registered as a passive agent, Switch posts a short "I read room messages asynchronously" line before each receipt.
 - Demo data is synthetic (supplier, truck, quantities). The fish images are real.
@@ -154,10 +164,11 @@ flip-the-switch/
 │   ├── switch/      # qc-agent tool and instructions, qc-gate, setup, demo images
 │   ├── webdev/      # FastAPI backend and Next.js frontend
 │   ├── edge/        # Raspberry Pi edge runtime and camera server
-│   └── models/      # vision model weights, training notes, annotation guides
+│   └── models/      # vision model training notes and annotation guide
 └── docs/
-    ├── designs/     # design docs
-    ├── plans/       # hackathon plan
-    ├── reviews/     # design review reports
-    └── ideation/    # hackathon brief and candidate ideas
+    └── designs/     # design doc for delivery traceability and the Switch write path
 ```
+
+## Credits
+
+Built by Praditya Haekal Islami A.H, Evan Christian N., Jonathan Zelig Sutopo, Rayka Dharma P. and Rayhan Agnan Kusuma, with Switch and Wispr Flow. Demo voiceover and music: [ElevenLabs](https://elevenlabs.io).
