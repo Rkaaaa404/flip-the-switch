@@ -68,6 +68,8 @@ yarn-error.log*
 *.sqlite
 *.sqlite3
 **/nusaqc.db
+**/*.db-wal
+**/*.db-shm
 backend/uploads/*
 !backend/uploads/.gitkeep
 **/backend/uploads/*
