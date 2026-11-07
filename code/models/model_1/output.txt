@@ -1,0 +1,134 @@
+[DAFIF DATASET PARSED] Total Sampel: 2536
+grade
+Grade_C    1196
+Grade_B     940
+Grade_A     400
+Name: count, dtype: int64
+
+[FFE DATASET PARSED] Total Sampel: 2199
+grade
+Grade_A    953
+Grade_C    625
+Grade_B    621
+Name: count, dtype: int64
+
+========================================================
+1. RANDOM SPLIT -> Train: 1775, Val: 380, Test: 381
+   Train Grade Distribution:
+{'Grade_C': 837, 'Grade_B': 658, 'Grade_A': 280}
+========================================================
+2. GROUPED SPLIT -> Train: 1756, Val: 380, Test: 400
+   Train Grade Distribution:
+{'Grade_C': 796, 'Grade_B': 740, 'Grade_A': 220}
+   Test  Grade Distribution:
+{'Grade_C': 280, 'Grade_B': 80, 'Grade_A': 40}
+========================================================
+
+📊 HASIL EVALUASI [Random Split (70/15/15)]:
+  ├─ Test Accuracy   : 99.48%
+  ├─ Macro F1-Score  : 0.9958
+  └─ RECALL GRADE C  : 1.0000 (Safety Critical)
+
+Classification Report:
+              precision    recall  f1-score   support
+
+     Grade_A     1.0000    1.0000    1.0000        60
+     Grade_B     1.0000    0.9858    0.9929       141
+     Grade_C     0.9890    1.0000    0.9945       180
+
+    accuracy                         0.9948       381
+   macro avg     0.9963    0.9953    0.9958       381
+weighted avg     0.9948    0.9948    0.9947       381
+
+📊 HASIL EVALUASI [Grouped Split (by Day/Session)]:
+  ├─ Test Accuracy   : 75.75%
+  ├─ Macro F1-Score  : 0.6648
+  └─ RECALL GRADE C  : 0.8464 (Safety Critical)
+
+Classification Report:
+              precision    recall  f1-score   support
+
+     Grade_A     0.6230    0.9500    0.7525        40
+     Grade_B     0.4308    0.3500    0.3862        80
+     Grade_C     0.8650    0.8464    0.8556       280
+
+    accuracy                         0.7575       400
+   macro avg     0.6396    0.7155    0.6648       400
+weighted avg     0.7539    0.7575    0.7514       400
+
+========================================================
+ SECONDARY VALIDATION ON FFE (CROSS-SPECIES & MACRO EYE)
+========================================================
+Pre-loading 2199 images into RAM (FFE Secondary Test)...
+  └─ Selesai! 2199 citra tersimpan di RAM.
+FFE Cross-Species Test -> Accuracy: 41.70% | Macro F1: 0.3032 | Recall Grade C: 0.0352
+              precision    recall  f1-score   support
+
+     Grade_A     0.4430    0.7828    0.5658       953
+     Grade_B     0.3394    0.2399    0.2811       621
+     Grade_C     0.2895    0.0352    0.0628       625
+
+    accuracy                         0.4170      2199
+   macro avg     0.3573    0.3526    0.3032      2199
+weighted avg     0.3701    0.4170    0.3424      2199
+
+
+
+W0818 16:47:26.808000 25 torch/onnx/_internal/exporter/_compat.py:125] Setting ONNX exporter to use operator set version 18 because the requested opset_version 14 is a lower version than we have implementations for. Automatic version conversion will be performed, which may not be successful at converting to the requested version. If version conversion is unsuccessful, the opset version of the exported model will be kept at 18. Please consider setting opset_version >=18 to leverage latest ONNX features
+W0818 16:47:27.634000 25 torch/onnx/_internal/exporter/_schemas.py:455] Missing annotation for parameter 'input' from (input, rois, spatial_scale: 'float', pooled_height: 'int', pooled_width: 'int', sampling_ratio: 'int' = -1, aligned: 'bool' = False). Treating as an Input.
+W0818 16:47:27.636000 25 torch/onnx/_internal/exporter/_schemas.py:455] Missing annotation for parameter 'rois' from (input, rois, spatial_scale: 'float', pooled_height: 'int', pooled_width: 'int', sampling_ratio: 'int' = -1, aligned: 'bool' = False). Treating as an Input.
+W0818 16:47:27.638000 25 torch/onnx/_internal/exporter/_schemas.py:455] Missing annotation for parameter 'input' from (input, boxes, output_size: 'Sequence[int]', spatial_scale: 'float' = 1.0). Treating as an Input.
+W0818 16:47:27.640000 25 torch/onnx/_internal/exporter/_schemas.py:455] Missing annotation for parameter 'boxes' from (input, boxes, output_size: 'Sequence[int]', spatial_scale: 'float' = 1.0). Treating as an Input.
+
+[torch.onnx] Obtain model graph for `MobileNetV3([...]` with `torch.export.export(..., strict=False)`...
+[torch.onnx] Obtain model graph for `MobileNetV3([...]` with `torch.export.export(..., strict=False)`... ✅
+[torch.onnx] Run decomposition...
+
+/usr/lib/python3.12/copyreg.py:99: FutureWarning: `isinstance(treespec, LeafSpec)` is deprecated, use `isinstance(treespec, TreeSpec) and treespec.is_leaf()` instead.
+  return cls.__new__(cls, *args)
+The model version conversion is not supported by the onnxscript version converter and fallback is enabled. The model will be converted using the onnx C API (target version: 14).
+Failed to convert the model to the target version 14 using the ONNX C API. The model was not modified
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.12/dist-packages/onnxscript/version_converter/__init__.py", line 137, in call
+    converted_proto = _c_api_utils.call_onnx_api(
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/onnxscript/version_converter/_c_api_utils.py", line 65, in call_onnx_api
+    result = func(proto)
+             ^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/onnxscript/version_converter/__init__.py", line 132, in _partial_convert_version
+    return onnx.version_converter.convert_version(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.12/dist-packages/onnx/version_converter.py", line 39, in convert_version
+    converted_model_str = C.convert_version(model_str, target_version)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: /project/onnx/version_converter/adapters/axes_input_to_attribute.h:56: adapt: Assertion `node->hasAttribute(kaxes)` failed: No initializer or constant input to node found
+
+[torch.onnx] Run decomposition... ✅
+[torch.onnx] Translate the graph into ONNX...
+[torch.onnx] Translate the graph into ONNX... ✅
+2. ONNX Float32 Exported   : /kaggle/working/output_model1/mobilenetv3_freshness.onnx (0.28 MB) [Static Batch 1, Opset 14]
+3. ONNX INT8 Quantized     : /kaggle/working/output_model1/mobilenetv3_freshness_int8.onnx (1.55 MB) [Kompresi: -454.7%]
+
+========================================================
+ BENCHMARKING CPU INFERENCE LATENCY (EDGE SIMULATION)
+========================================================
+
+📊 HASIL BENCHMARK LATENSI CPU (Batch Size = 1):
+  ├─ 1. PyTorch CPU Native   : 12.96 ms/frame (77.2 FPS)
+  ├─ 2. ONNX Runtime FP32    : 3.44 ms/frame (291.0 FPS)
+  └─ 3. ONNX Runtime INT8    : 16.00 ms/frame (62.5 FPS)
+
+======================================================================
+ ⭐ RINGKASAN DATA AKHIR MODEL 1 (NUSAQC FRESHNESS ENGINE)
+======================================================================
+        Metode Evaluasi Akurasi (%) Macro F1 Recall Grade C                          Status
+Random Split (Baseline)      99.48%   0.9958         1.0000 Artificially Inflated (Leakage)
+ Grouped Split (Honest)      75.75%   0.6648         0.8464       Production Generalization
+     FFE Secondary Test      41.70%   0.3032         0.0352        Domain/Modality Mismatch
+
+📦 MODEL ARTIFACT SIZES & LATENCY:
+  ├─ PyTorch Weight (.pt)    : 5.93 MB
+  ├─ ONNX FP32 (.onnx)       : 0.28 MB | Latensi: 3.44 ms
+  └─ ONNX INT8 (.onnx)       : 1.55 MB | Latensi: 16.00 ms
+
+📂 Seluruh artefak visual (.png) & model (.onnx) tersimpan di: /kaggle/working/output_model1

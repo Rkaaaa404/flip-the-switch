@@ -1,0 +1,117 @@
+200 epochs completed in 3.991 hours.
+Optimizer stripped from /kaggle/working/runs_model2/nusaqc_yolov8s_v2/weights/last.pt, 22.5MB
+Optimizer stripped from /kaggle/working/runs_model2/nusaqc_yolov8s_v2/weights/best.pt, 22.5MB
+
+Validating /kaggle/working/runs_model2/nusaqc_yolov8s_v2/weights/best.pt...
+Ultralytics 8.4.121 🚀 Python-3.12.13 torch-2.10.0+cu128 CUDA:0 (Tesla T4, 14912MiB)
+Model summary (fused): 73 layers, 11,127,132 parameters, 0 gradients, 28.4 GFLOPs
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 21/21 2.9it/s 7.3s
+                   all        642        720      0.771      0.661       0.72      0.464
+            sisik_sisa         97        141      0.744      0.578      0.626      0.375
+        warna_abnormal        256        360      0.896      0.745      0.841      0.567
+          luka_robekan         72        112      0.717      0.611      0.659      0.444
+       lendir_berlebih         79        107      0.725       0.71      0.754       0.47
+Speed: 0.3ms preprocess, 6.7ms inference, 0.0ms loss, 1.3ms postprocess per image
+Results saved to /kaggle/working/runs_model2/nusaqc_yolov8s_v2
+
+📊 Evaluasi Model v2 pada Validation Split...
+Ultralytics 8.4.121 🚀 Python-3.12.13 torch-2.10.0+cu128 CUDA:0 (Tesla T4, 14912MiB)
+Model summary (fused): 73 layers, 11,127,132 parameters, 0 gradients, 28.4 GFLOPs
+val: Fast image access ✅ (ping: 0.0±0.0 ms, read: 326.9±170.2 MB/s, size: 7.5 KB)
+val: Scanning /kaggle/working/nusaqc_clean_dataset/valid/labels.cache... 642 images, 141 backgrounds, 0 corrupt: 100% ━━━━━━━━━━━━ 642/642 299.2Mit/s 0.0s
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 41/41 3.4it/s 11.9s
+                   all        642        720       0.77      0.664      0.719      0.464
+            sisik_sisa         97        141      0.745      0.581      0.623      0.372
+        warna_abnormal        256        360      0.895       0.75       0.84      0.567
+          luka_robekan         72        112      0.718      0.614      0.659      0.446
+       lendir_berlebih         79        107      0.724       0.71      0.752       0.47
+Speed: 1.5ms preprocess, 14.1ms inference, 0.0ms loss, 0.6ms postprocess per image
+Results saved to /kaggle/working/runs/detect/val
+  • Precision : 0.7705
+  • Recall    : 0.6638
+  • mAP@50    : 0.7187
+  • mAP@50-95 : 0.4638
+
+📊 Evaluasi TTA (Test-Time Augmentation)...
+Ultralytics 8.4.121 🚀 Python-3.12.13 torch-2.10.0+cu128 CUDA:0 (Tesla T4, 14912MiB)
+val: Fast image access ✅ (ping: 0.0±0.0 ms, read: 490.9±487.6 MB/s, size: 16.9 KB)
+val: Scanning /kaggle/working/nusaqc_clean_dataset/valid/labels.cache... 642 images, 141 backgrounds, 0 corrupt: 100% ━━━━━━━━━━━━ 642/642 299.2Mit/s 0.0s
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 41/41 1.6it/s 25.1s
+                   all        642        720      0.804      0.677      0.732      0.505
+            sisik_sisa         97        141      0.772      0.596      0.678      0.448
+        warna_abnormal        256        360      0.906      0.756      0.855      0.608
+          luka_robekan         72        112      0.776      0.607      0.659      0.476
+       lendir_berlebih         79        107      0.762      0.748      0.734      0.485
+Speed: 1.7ms preprocess, 34.3ms inference, 0.0ms loss, 0.6ms postprocess per image
+Results saved to /kaggle/working/runs/detect/val-2
+  [TTA] Precision : 0.8039
+  [TTA] Recall    : 0.6765
+  [TTA] mAP@50    : 0.7315
+  [TTA] mAP@50-95 : 0.5045
+
+  ════════════════════════════════════════════════════════════════════════════════
+📋 PER-CLASS PERFORMANCE REPORT (v2 vs Baseline)
+════════════════════════════════════════════════════════════════════════════════
+Kelas                v2 mAP50  Base mAP50    Δ mAP50  v2 mAP50-95   Status
+────────────────────────────────────────────────────────────────────────────────
+  sisik_sisa           0.6229      0.6760    -0.0531       0.3722  ⚠️ DOWN
+  warna_abnormal       0.8404      0.8360    +0.0044       0.5667     ✅ UP
+  luka_robekan         0.6591      0.6420    +0.0171       0.4458     ✅ UP
+  lendir_berlebih      0.7525      0.7300    +0.0225       0.4705     ✅ UP
+────────────────────────────────────────────────────────────────────────────────
+
+══════════════════════════════════════════════════════════════════════
+📊 OVERALL COMPARISON: v2 vs Baseline
+══════════════════════════════════════════════════════════════════════
+  ✅ precision   : 0.7700 → 0.7705 (+0.0005, +0.1%)
+  ⚠️ recall      : 0.6830 → 0.6638 (-0.0192, -2.8%)
+  ⚠️ mAP50       : 0.7210 → 0.7187 (-0.0023, -0.3%)
+  ⚠️ mAP50-95    : 0.4770 → 0.4638 (-0.0132, -2.8%)
+══════════════════════════════════════════════════════════════════════
+
+🎯 Target Achievement:
+  ❌ mAP50: 0.7187 (target ≥ 0.80)
+  ❌ recall: 0.6638 (target ≥ 0.75)
+  ❌ mAP50-95: 0.4638 (target ≥ 0.55)
+
+⚠️ Beberapa target belum tercapai — pertimbangkan iterasi lanjutan.
+
+📦 Exporting ONNX (imgsz=640 untuk Raspberry Pi deploy)...
+Ultralytics 8.4.121 🚀 Python-3.12.13 torch-2.10.0+cu128 CPU (Intel Xeon CPU @ 2.00GHz)
+💡 ProTip: Export to OpenVINO format for best performance on Intel hardware. Learn more at https://docs.ultralytics.com/integrations/openvino/
+
+PyTorch: starting from '/kaggle/working/runs_model2/nusaqc_yolov8s_v2/weights/best.pt' with input shape (1, 3, 640, 640) BCHW and output shape(s) (1, 8, 8400) (21.5 MB)
+requirements: Ultralytics requirements ['onnxruntime', 'onnxslim>=0.1.82'] not found, attempting AutoUpdate...
+Using Python 3.12.13 environment at: /usr
+Resolved 12 packages in 336ms
+Downloading onnxruntime (22.1MiB)
+ Downloaded onnxruntime
+Prepared 2 packages in 330ms
+Installed 2 packages in 12ms
+ + onnxruntime==1.29.0
+ + onnxslim==0.1.96
+
+requirements: AutoUpdate success ✅ 1.1s
+WARNING ⚠️ requirements: Restart runtime or rerun command for updates to take effect
+
+
+ONNX: starting export with onnx 1.22.0 opset 20...
+ONNX: slimming with onnxslim 0.1.96...
+ONNX: export success ✅ 3.1s, saved as '/kaggle/working/runs_model2/nusaqc_yolov8s_v2/weights/best.onnx' (42.7 MB)
+
+Export complete (3.7s)
+Results saved to /kaggle/working/runs_model2/nusaqc_yolov8s_v2/weights/best.onnx
+Predict:         yolo predict task=detect model=/kaggle/working/runs_model2/nusaqc_yolov8s_v2/weights/best.onnx imgsz=640 
+Validate:        yolo val task=detect model=/kaggle/working/runs_model2/nusaqc_yolov8s_v2/weights/best.onnx imgsz=640 data=/kaggle/working/data.yaml  
+Visualize:       https://netron.app
+✅ ONNX exported: /kaggle/working/runs_model2/nusaqc_yolov8s_v2/weights/best.onnx
+
+══════════════════════════════════════════════════════════════════════
+⏱️ BENCHMARKING CPU INFERENCE LATENCY (MODEL 2 YOLOv8s)
+══════════════════════════════════════════════════════════════════════
+  • ONNX CPU Latency (Batch=1, 640x640): 150.80 ms/frame (6.6 FPS)
+  • Target Penyisihan COMPFEST (<150 ms): ⚠️ MELEBIHI
+  ✓ best.pt -> /kaggle/working/best.pt
+  ✓ ONNX -> /kaggle/working/model2_defect_detector.onnx
+
+✨ Seluruh Output Siap di: /kaggle/working/MODEL_OUTPUTS

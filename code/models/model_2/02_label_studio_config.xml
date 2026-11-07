@@ -1,0 +1,28 @@
+<!--
+  Label Studio Configuration Template for NusaQC Model 2
+  Surface Contamination & Defect Detector (YOLOv8s)
+  Class Mapping (YOLO Export Order 0-3):
+    0: sisik_sisa
+    1: warna_abnormal
+    2: luka_robekan
+    3: lendir_berlebih
+-->
+<View>
+  <Header value="NusaQC Model 2 - Fish Surface Defect &amp; Contamination Annotation"/>
+  <Text name="instruction" value="Instruksi: Pilih kelas defect (Hotkey 1-4), lalu buat Bounding Box pada area cacat fisik/kontaminasi ikan."/>
+  
+  <Image name="image" value="$image" zoom="true" rotateControl="true"/>
+  
+  <RectangleLabels name="label" toName="image" canRotate="false">
+    <Label value="sisik_sisa" background="#FF9900" hotkey="1"/>
+    <Label value="warna_abnormal" background="#FF0000" hotkey="2"/>
+    <Label value="luka_robekan" background="#FFCC00" hotkey="3"/>
+    <Label value="lendir_berlebih" background="#9900FF" hotkey="4"/>
+  </RectangleLabels>
+
+  <Choices name="quality_status" toName="image" showInline="true">
+    <Choice value="High Quality Sample"/>
+    <Choice value="Blurry / Low Resolution"/>
+    <Choice value="Occluded / Cut Off"/>
+  </Choices>
+</View>
