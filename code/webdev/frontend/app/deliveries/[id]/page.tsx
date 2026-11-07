@@ -8,8 +8,7 @@ import {
   captureView,
   getDeliveryById,
   getFullImageUrl,
-  recordDisposition,
-  recordMovement,
+  getProposals,
   simulateConveyor,
   updateDeliveryStatus,
 } from "@/lib/api";
@@ -23,18 +22,16 @@ import type {
   DispositionOutcome,
   FishInspection,
   HumanDisposition,
-  HumanDispositionCreate,
   InferenceMode,
   InspectionStatus,
   InspectionView,
   MaterialMovement,
-  MaterialMovementCreate,
   ProcessingStage,
+  RecordProposal,
   ViewSide,
 } from "@/types/delivery";
 
 const POLL_MS = 3000;
-const BALANCE_EPSILON = 1e-6;
 
 type Tone = "green" | "amber" | "red" | "grey" | "sky" | "orange";
 type Feedback = { tone: "error" | "success"; text: string } | null;
@@ -79,17 +76,6 @@ const OUTCOME_TONE: Record<DispositionOutcome, Tone> = {
   DOWNGRADE: "orange",
 };
 
-const DISPOSITION_OUTCOMES: DispositionOutcome[] = ["ACCEPT", "REJECT", "REPROCESS", "DOWNGRADE"];
-
-const STAGE_ORDER: ProcessingStage[] = [
-  "receiving_to_storage",
-  "receiving_to_processing",
-  "processing_wggs",
-  "processing_fillet",
-  "storage_to_processing",
-  "processing_to_dispatch",
-];
-
 const STAGE_LABEL: Record<ProcessingStage, string> = {
   receiving_to_storage: "Receiving → storage",
   receiving_to_processing: "Receiving → processing",
@@ -98,8 +84,6 @@ const STAGE_LABEL: Record<ProcessingStage, string> = {
   storage_to_processing: "Storage → processing",
   processing_to_dispatch: "Processing → dispatch",
 };
-
-const RECEIVING_STAGES: ProcessingStage[] = ["receiving_to_storage", "receiving_to_processing"];
 
 const TONE_CLASS: Record<Tone, string> = {
   green: "bg-emerald-100 text-emerald-700 border-emerald-200",
@@ -121,10 +105,6 @@ function errorMessage(err: unknown): string {
 function formatTime(iso: string): string {
   const date = new Date(iso);
   return Number.isNaN(date.getTime()) ? iso : date.toLocaleString();
-}
-
-function toNumber(raw: string): number {
-  return raw.trim() === "" ? 0 : Number(raw);
 }
 
 function Pill({ tone, title, children }: { tone: Tone; title?: string; children: ReactNode }) {
@@ -558,164 +538,128 @@ function InspectionList({
   );
 }
 
+const SWITCH_ROOM = "receiving-qc";
+
+function SignedBadge({ via, messageId }: { via?: string | null; messageId?: string | null }) {
+  if (via !== "switch_gate") {
+    return (
+      <Pill tone="grey" title="Recorded before Switch sign-off was required">
+        Legacy entry
+      </Pill>
+    );
+  }
+  return (
+    <Pill tone="sky" title={messageId ? `Switch message ${messageId}` : undefined}>
+      Signed in Switch
+    </Pill>
+  );
+}
+
+function num(v: unknown): number {
+  return typeof v === "number" ? v : Number(v ?? 0);
+}
+
+function describeProposal(p: RecordProposal): string {
+  const x = p.payload;
+  if (p.kind === "disposition") {
+    const lot = x.output_lot_id ? ` → ${String(x.output_lot_id)}` : "";
+    return `${String(x.disposition)} ${num(x.affected_quantity)} ${String(x.quantity_unit ?? "")}${lot} · "${String(
+      x.decision_reason ?? ""
+    )}"`;
+  }
+  const stage = STAGE_LABEL[x.stage as ProcessingStage] ?? String(x.stage);
+  const losses = num(x.normal_yield_loss) + num(x.qc_reject_loss);
+  return `${stage}: ${String(x.input_ref)} → ${String(x.output_lot_id)} · in ${num(x.quantity_in)} = out ${num(
+    x.quantity_out
+  )} + losses ${losses} + variance ${num(x.unexplained_variance)}`;
+}
+
+function ProposalList({
+  proposals,
+  kind,
+  signer,
+}: {
+  proposals: RecordProposal[];
+  kind: RecordProposal["kind"];
+  signer: string;
+}) {
+  const mine = proposals.filter((p) => p.kind === kind);
+  const pending = mine.filter((p) => p.status === "pending");
+  const rejected = mine.filter((p) => p.status === "rejected");
+
+  return (
+    <div className="flex flex-col gap-3 rounded-md border border-sky-200 bg-sky-50/60 p-4">
+      <div className="flex flex-col gap-1">
+        <h3 className="text-sm font-semibold text-sky-900">Waiting for sign-off in Switch</h3>
+        <p className="text-xs text-sky-800">
+          qc-agent drafts these in the <span className="font-mono">{SWITCH_ROOM}</span> room. Nothing is recorded
+          until {signer} types the command there. This page can&apos;t write records.
+        </p>
+      </div>
+      {pending.length === 0 ? (
+        <p className="text-sm text-sky-900/70">No drafts waiting.</p>
+      ) : (
+        <ul className="flex flex-col gap-2">
+          {pending.map((p) => (
+            <li key={p.id} className="flex flex-col gap-1 rounded-md border border-sky-200 bg-white p-3 text-sm">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="font-mono text-xs font-semibold text-gray-900">{p.id}</span>
+                <Pill tone="amber">Draft</Pill>
+                <span className="text-gray-700">{describeProposal(p)}</span>
+              </div>
+              <code className="self-start rounded bg-gray-900 px-2 py-1 font-mono text-xs text-emerald-300">
+                {p.approve_command}
+              </code>
+            </li>
+          ))}
+        </ul>
+      )}
+      {rejected.length > 0 && (
+        <ul className="flex flex-col gap-1 text-xs text-gray-600">
+          {rejected.map((p) => (
+            <li key={p.id}>
+              <span className="font-mono">{p.id}</span> rejected by {p.decided_by ?? "?"}
+              {p.decision_note ? `: "${p.decision_note}"` : ""} · {describeProposal(p)}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
 function DispositionSection({
   delivery,
   dispositions,
-  onChanged,
+  proposals,
 }: {
   delivery: DeliverySummary;
   dispositions: HumanDisposition[];
-  onChanged: () => Promise<void>;
+  proposals: RecordProposal[];
 }) {
-  const [outcome, setOutcome] = useState<DispositionOutcome>("ACCEPT");
-  const [quantity, setQuantity] = useState("");
-  const [lot, setLot] = useState("");
-  const [reason, setReason] = useState("");
-  const [authorizedBy, setAuthorizedBy] = useState("");
-  const [supersedesId, setSupersedesId] = useState("");
-  const [busy, setBusy] = useState(false);
-  const [feedback, setFeedback] = useState<Feedback>(null);
-
   const open = delivery.status === "inspection_complete" || delivery.status === "disposition_recorded";
-  const activeDispositions = dispositions.filter((d) => !d.superseded);
-  const dispositioned = activeDispositions.reduce((sum, d) => sum + d.affected_quantity, 0);
-
-  async function onSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const qty = Number(quantity);
-    if (!(qty > 0)) {
-      setFeedback({ tone: "error", text: "Affected quantity must be greater than zero." });
-      return;
-    }
-    const body: HumanDispositionCreate = {
-      output_lot_id: outcome === "REJECT" ? null : lot.trim(),
-      disposition: outcome,
-      affected_quantity: qty,
-      quantity_unit: delivery.quantity_unit,
-      decision_reason: reason.trim(),
-      authorized_by: authorizedBy.trim(),
-      supersedes_id: supersedesId === "" ? null : Number(supersedesId),
-    };
-    setBusy(true);
-    setFeedback(null);
-    try {
-      await recordDisposition(delivery.id, body);
-      setOutcome("ACCEPT");
-      setQuantity("");
-      setLot("");
-      setReason("");
-      setAuthorizedBy("");
-      setSupersedesId("");
-      setFeedback({ tone: "success", text: "Disposition recorded." });
-      await onChanged();
-    } catch (err) {
-      setFeedback({ tone: "error", text: errorMessage(err) });
-    } finally {
-      setBusy(false);
-    }
-  }
+  const dispositioned = dispositions.filter((d) => !d.superseded).reduce((sum, d) => sum + d.affected_quantity, 0);
 
   return (
     <Card className="flex flex-col gap-6">
       <div className="flex flex-col gap-1">
         <h2 className="text-base font-semibold text-gray-900">Disposition</h2>
         <p className="text-xs text-gray-500">
-          Dispositioned {dispositioned} of {delivery.stated_quantity} {delivery.quantity_unit}. A correction
-          supersedes an earlier row; the original stays in the history.
+          Dispositioned {dispositioned} of {delivery.stated_quantity} {delivery.quantity_unit}. Only a QC supervisor
+          can sign one, from the Switch room. A correction supersedes an earlier row, and the original stays in the
+          history.
         </p>
       </div>
 
-      {!open && (
+      {open ? (
+        <ProposalList proposals={proposals} kind="disposition" signer="a QC supervisor" />
+      ) : (
         <p className="text-sm text-gray-500">
           {delivery.status === "active_receiving"
             ? "Finish inspection to start recording dispositions."
             : "This delivery is closed."}
         </p>
       )}
-
-      <form onSubmit={onSubmit}>
-        <fieldset disabled={!open || busy} className="grid grid-cols-1 gap-3 disabled:opacity-60 sm:grid-cols-2">
-          <label className={LABEL_CLASS}>
-            Outcome
-            <select
-              value={outcome}
-              onChange={(e) => setOutcome(e.target.value as DispositionOutcome)}
-              className={INPUT_CLASS}
-            >
-              {DISPOSITION_OUTCOMES.map((o) => (
-                <option key={o} value={o}>
-                  {o}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className={LABEL_CLASS}>
-            Affected quantity
-            <input
-              type="number"
-              min={0}
-              step="any"
-              required
-              value={quantity}
-              onChange={(e) => setQuantity(e.target.value)}
-              className={INPUT_CLASS}
-            />
-          </label>
-          <label className={LABEL_CLASS}>
-            Unit (locked to delivery)
-            <input readOnly value={delivery.quantity_unit} className={`${INPUT_CLASS} bg-gray-50`} />
-          </label>
-          {outcome !== "REJECT" && (
-            <label className={LABEL_CLASS}>
-              Output lot ID
-              <input
-                required
-                value={lot}
-                onChange={(e) => setLot(e.target.value)}
-                className={INPUT_CLASS}
-              />
-            </label>
-          )}
-          <label className={LABEL_CLASS}>
-            Authorized by
-            <input
-              required
-              value={authorizedBy}
-              onChange={(e) => setAuthorizedBy(e.target.value)}
-              className={INPUT_CLASS}
-            />
-          </label>
-          <label className={`${LABEL_CLASS} sm:col-span-2`}>
-            Decision reason
-            <textarea
-              required
-              rows={2}
-              value={reason}
-              onChange={(e) => setReason(e.target.value)}
-              className="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
-            />
-          </label>
-          <label className={`${LABEL_CLASS} sm:col-span-2`}>
-            Corrects an earlier disposition (optional)
-            <select
-              value={supersedesId}
-              onChange={(e) => setSupersedesId(e.target.value)}
-              className={INPUT_CLASS}
-            >
-              <option value="">None</option>
-              {activeDispositions.map((d) => (
-                <option key={d.id} value={d.id}>
-                  #{d.id} · {d.disposition} · {d.affected_quantity} {d.quantity_unit}
-                </option>
-              ))}
-            </select>
-          </label>
-          <div className="flex flex-wrap items-center justify-between gap-3 sm:col-span-2">
-            <FeedbackLine feedback={feedback} />
-            <Button type="submit">{busy ? "Recording…" : "Record disposition"}</Button>
-          </div>
-        </fieldset>
-      </form>
 
       {dispositions.length === 0 ? (
         <p className="text-sm text-gray-500">No dispositions recorded yet.</p>
@@ -736,10 +680,13 @@ function DispositionSection({
                   <span className="text-xs text-gray-500">corrects #{d.supersedes_id}</span>
                 )}
                 {d.superseded && <Pill tone="grey">Superseded by correction</Pill>}
+                <SignedBadge via={d.authorized_via} messageId={d.switch_message_id} />
               </div>
               <p className="mt-1 text-gray-700">{d.decision_reason}</p>
               <p className="mt-1 text-xs text-gray-500">
-                #{d.id} · {d.authorized_by} · {formatTime(d.decided_at)}
+                #{d.id} · signed by <span className="font-medium text-gray-700">{d.authorized_by}</span> ·{" "}
+                {formatTime(d.decided_at)}
+                {d.switch_message_id && <span className="font-mono"> · {d.switch_message_id}</span>}
               </p>
             </li>
           ))}
@@ -752,233 +699,31 @@ function DispositionSection({
 function MovementSection({
   delivery,
   movements,
-  onChanged,
+  proposals,
 }: {
   delivery: DeliverySummary;
   movements: MaterialMovement[];
-  onChanged: () => Promise<void>;
+  proposals: RecordProposal[];
 }) {
-  const [stage, setStage] = useState<ProcessingStage>("receiving_to_storage");
-  const [upstreamRef, setUpstreamRef] = useState("");
-  const [outputLot, setOutputLot] = useState("");
-  const [qtyIn, setQtyIn] = useState("");
-  const [qtyOut, setQtyOut] = useState("");
-  const [normalLoss, setNormalLoss] = useState("");
-  const [qcLoss, setQcLoss] = useState("");
-  const [variance, setVariance] = useState("");
-  const [operatorId, setOperatorId] = useState("");
-  const [notes, setNotes] = useState("");
-  const [busy, setBusy] = useState(false);
-  const [feedback, setFeedback] = useState<Feedback>(null);
-
   const open = delivery.status === "disposition_recorded";
-  const receiving = RECEIVING_STAGES.includes(stage);
-  const inputRef = receiving ? delivery.id : upstreamRef;
-  const upstreamOptions = Array.from(new Set(movements.map((m) => m.output_lot_id)));
-
-  const numbersValid = [qtyIn, qtyOut, normalLoss, qcLoss, variance].every((s) =>
-    Number.isFinite(toNumber(s))
-  );
-  const qin = toNumber(qtyIn);
-  const qout = toNumber(qtyOut);
-  const losses = toNumber(normalLoss) + toNumber(qcLoss);
-  const uv = toNumber(variance);
-  const difference = qin - (qout + losses + uv);
-  const balanced = numbersValid && Math.abs(difference) <= BALANCE_EPSILON;
-  const canSubmit =
-    open && balanced && inputRef !== "" && outputLot.trim() !== "" && operatorId.trim() !== "" && !busy;
-
-  const shownNumber = (n: number) => (Number.isFinite(n) ? String(n) : "—");
-
-  async function onSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const body: MaterialMovementCreate = {
-      input_ref: inputRef,
-      output_lot_id: outputLot.trim(),
-      stage,
-      quantity_in: qin,
-      quantity_out: qout,
-      quantity_unit: delivery.quantity_unit,
-      normal_yield_loss: toNumber(normalLoss),
-      qc_reject_loss: toNumber(qcLoss),
-      unexplained_variance: uv,
-      operator_id: operatorId.trim(),
-      notes: notes.trim() || null,
-    };
-    setBusy(true);
-    setFeedback(null);
-    try {
-      await recordMovement(delivery.id, body);
-      setUpstreamRef("");
-      setOutputLot("");
-      setQtyIn("");
-      setQtyOut("");
-      setNormalLoss("");
-      setQcLoss("");
-      setVariance("");
-      setOperatorId("");
-      setNotes("");
-      setFeedback({ tone: "success", text: "Movement recorded." });
-      await onChanged();
-    } catch (err) {
-      setFeedback({ tone: "error", text: errorMessage(err) });
-    } finally {
-      setBusy(false);
-    }
-  }
 
   return (
     <Card className="flex flex-col gap-6">
       <div className="flex flex-col gap-1">
         <h2 className="text-base font-semibold text-gray-900">Movements</h2>
         <p className="text-xs text-gray-500">
-          Quantity in must equal quantity out plus losses and variance. Unit: {delivery.quantity_unit}.
+          Quantity in must equal quantity out plus losses and variance. Unit: {delivery.quantity_unit}. A floor
+          operator or the QC supervisor confirms each one from the Switch room.
         </p>
       </div>
 
-      {!open && (
+      {open ? (
+        <ProposalList proposals={proposals} kind="movement" signer="a floor operator or the QC supervisor" />
+      ) : (
         <p className="text-sm text-gray-500">
           Movements open once dispositions are recorded and the delivery is in disposition recorded status.
         </p>
       )}
-
-      <form onSubmit={onSubmit}>
-        <fieldset disabled={!open || busy} className="grid grid-cols-1 gap-3 disabled:opacity-60 sm:grid-cols-2">
-          <label className={LABEL_CLASS}>
-            Stage
-            <select
-              value={stage}
-              onChange={(e) => setStage(e.target.value as ProcessingStage)}
-              className={INPUT_CLASS}
-            >
-              {STAGE_ORDER.map((s) => (
-                <option key={s} value={s}>
-                  {STAGE_LABEL[s]}
-                </option>
-              ))}
-            </select>
-          </label>
-          {receiving ? (
-            <label className={LABEL_CLASS}>
-              Input ref (this delivery)
-              <input readOnly value={delivery.id} className={`${INPUT_CLASS} bg-gray-50 font-mono`} />
-            </label>
-          ) : (
-            <label className={LABEL_CLASS}>
-              Input ref (upstream lot)
-              <select
-                required
-                value={upstreamRef}
-                onChange={(e) => setUpstreamRef(e.target.value)}
-                className={INPUT_CLASS}
-              >
-                <option value="">
-                  {upstreamOptions.length === 0 ? "No movement output lots yet" : "Select lot"}
-                </option>
-                {upstreamOptions.map((lotId) => (
-                  <option key={lotId} value={lotId}>
-                    {lotId}
-                  </option>
-                ))}
-              </select>
-            </label>
-          )}
-          <label className={LABEL_CLASS}>
-            Output lot ID
-            <input
-              required
-              value={outputLot}
-              onChange={(e) => setOutputLot(e.target.value)}
-              className={INPUT_CLASS}
-            />
-          </label>
-          <label className={LABEL_CLASS}>
-            Operator ID
-            <input
-              required
-              value={operatorId}
-              onChange={(e) => setOperatorId(e.target.value)}
-              className={INPUT_CLASS}
-            />
-          </label>
-          <label className={LABEL_CLASS}>
-            Quantity in ({delivery.quantity_unit})
-            <input
-              type="number"
-              step="any"
-              required
-              value={qtyIn}
-              onChange={(e) => setQtyIn(e.target.value)}
-              className={INPUT_CLASS}
-            />
-          </label>
-          <label className={LABEL_CLASS}>
-            Quantity out ({delivery.quantity_unit})
-            <input
-              type="number"
-              step="any"
-              required
-              value={qtyOut}
-              onChange={(e) => setQtyOut(e.target.value)}
-              className={INPUT_CLASS}
-            />
-          </label>
-          <label className={LABEL_CLASS}>
-            Normal yield loss
-            <input
-              type="number"
-              step="any"
-              placeholder="0"
-              value={normalLoss}
-              onChange={(e) => setNormalLoss(e.target.value)}
-              className={INPUT_CLASS}
-            />
-          </label>
-          <label className={LABEL_CLASS}>
-            QC reject loss
-            <input
-              type="number"
-              step="any"
-              placeholder="0"
-              value={qcLoss}
-              onChange={(e) => setQcLoss(e.target.value)}
-              className={INPUT_CLASS}
-            />
-          </label>
-          <label className={LABEL_CLASS}>
-            Unexplained variance (may be negative)
-            <input
-              type="number"
-              step="any"
-              placeholder="0"
-              value={variance}
-              onChange={(e) => setVariance(e.target.value)}
-              className={INPUT_CLASS}
-            />
-          </label>
-          <label className={LABEL_CLASS}>
-            Notes (optional)
-            <input value={notes} onChange={(e) => setNotes(e.target.value)} className={INPUT_CLASS} />
-          </label>
-
-          <p
-            role="status"
-            className={`rounded-md px-3 py-2 font-mono text-sm sm:col-span-2 ${
-              balanced ? "bg-emerald-50 text-emerald-800" : "bg-red-50 text-red-700"
-            }`}
-          >
-            in {shownNumber(qin)} = out {shownNumber(qout)} + losses {shownNumber(losses)} + variance{" "}
-            {shownNumber(uv)} → difference {numbersValid ? difference.toFixed(3) : "—"}
-          </p>
-
-          <div className="flex flex-wrap items-center justify-between gap-3 sm:col-span-2">
-            <FeedbackLine feedback={feedback} />
-            <Button type="submit" disabled={!canSubmit}>
-              {busy ? "Recording…" : "Record movement"}
-            </Button>
-          </div>
-        </fieldset>
-      </form>
 
       {movements.length === 0 ? (
         <p className="text-sm text-gray-500">No movements recorded yet.</p>
@@ -993,7 +738,7 @@ function MovementSection({
                 <th scope="col" className="pr-3 font-semibold">Out</th>
                 <th scope="col" className="pr-3 font-semibold">Losses (normal / QC)</th>
                 <th scope="col" className="pr-3 font-semibold">Variance</th>
-                <th scope="col" className="pr-3 font-semibold">Operator</th>
+                <th scope="col" className="pr-3 font-semibold">Signed by</th>
                 <th scope="col" className="font-semibold">Time</th>
               </tr>
             </thead>
@@ -1010,7 +755,12 @@ function MovementSection({
                     {m.normal_yield_loss} / {m.qc_reject_loss}
                   </td>
                   <td className="pr-3">{m.unexplained_variance}</td>
-                  <td className="pr-3">{m.operator_id}</td>
+                  <td className="pr-3">
+                    <div className="flex flex-col items-start gap-1">
+                      <span>{m.operator_id}</span>
+                      <SignedBadge via={m.authorized_via} messageId={m.switch_message_id} />
+                    </div>
+                  </td>
                   <td className="whitespace-nowrap text-xs">{formatTime(m.timestamp)}</td>
                 </tr>
               ))}
@@ -1056,6 +806,31 @@ export default function DeliveryQcWorkspacePage() {
     return () => clearInterval(timer);
   }, [status, refresh]);
 
+  // Records are signed in the Switch room, so watch the drafts and reload when one is decided there.
+  const [proposals, setProposals] = useState<RecordProposal[]>([]);
+  const signingOpen = status === "inspection_complete" || status === "disposition_recorded";
+  useEffect(() => {
+    if (!signingOpen) return;
+    let ignore = false;
+    let decided: string | null = null;
+    const load = () =>
+      getProposals(deliveryId)
+        .then((rows) => {
+          if (ignore) return;
+          setProposals(rows);
+          const key = rows.filter((p) => p.status !== "pending").map((p) => p.id).join(",");
+          if (decided !== null && key !== decided) void refresh();
+          decided = key;
+        })
+        .catch(() => undefined);
+    void load();
+    const timer = setInterval(load, POLL_MS);
+    return () => {
+      ignore = true;
+      clearInterval(timer);
+    };
+  }, [deliveryId, signingOpen, refresh]);
+
   if (!detail) {
     const loading = loadError === null;
     return (
@@ -1099,9 +874,9 @@ export default function DeliveryQcWorkspacePage() {
       <DispositionSection
         delivery={detail.delivery}
         dispositions={detail.dispositions}
-        onChanged={refresh}
+        proposals={proposals}
       />
-      <MovementSection delivery={detail.delivery} movements={detail.movements} onChanged={refresh} />
+      <MovementSection delivery={detail.delivery} movements={detail.movements} proposals={proposals} />
     </div>
   );
 }

@@ -22,6 +22,7 @@ import type {
   MaterialMovementCreate,
   SimulateRequest,
   ViewSide,
+  RecordProposal,
 } from "@/types/delivery";
 
 export const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
@@ -387,6 +388,15 @@ export function recordMovement(
     `/${encodeURIComponent(id)}/movements`,
     jsonInit("POST", body)
   );
+}
+
+export async function getProposals(deliveryId: string): Promise<RecordProposal[]> {
+  const res = await fetch(
+    `${API_BASE}/api/v1/switchroom/proposals?delivery_id=${encodeURIComponent(deliveryId)}`,
+    { cache: "no-store" }
+  );
+  if (!res.ok) throw new Error(`Failed to load Switch proposals (${res.status})`);
+  return res.json();
 }
 
 export function getDeliveryTrace(id: string): Promise<DeliveryTraceTree> {

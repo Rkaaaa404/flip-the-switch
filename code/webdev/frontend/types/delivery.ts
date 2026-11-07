@@ -123,6 +123,9 @@ export interface HumanDisposition {
   decided_at: string;
   supersedes_id: number | null;
   superseded: boolean;
+  /** "switch_gate" when signed by a person in the Switch room via qc-gate. */
+  authorized_via?: string | null;
+  switch_message_id?: string | null;
 }
 
 export interface MaterialMovementCreate {
@@ -154,6 +157,8 @@ export interface MaterialMovement {
   operator_id: string;
   timestamp: string;
   notes: string | null;
+  authorized_via?: string | null;
+  switch_message_id?: string | null;
 }
 
 export interface StorageSlotRef {
@@ -227,4 +232,22 @@ export interface LotProvenance {
 export interface SimulateRequest {
   count?: number;
   drop_ventral_every?: number | null;
+}
+
+export type ProposalStatus = "pending" | "applied" | "rejected";
+
+/** A draft written by qc-agent in the Switch room. Only a person's `@qc-gate` command applies it. */
+export interface RecordProposal {
+  id: string; // DP-n or MV-n
+  kind: "disposition" | "movement";
+  delivery_id: string;
+  payload: Record<string, unknown>;
+  status: ProposalStatus;
+  source_message_id: string | null;
+  created_at: string;
+  decided_by: string | null;
+  decided_at: string | null;
+  decision_note: string | null;
+  applied_record_id: number | null;
+  approve_command: string;
 }

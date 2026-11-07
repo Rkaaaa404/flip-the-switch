@@ -331,6 +331,19 @@ function Stat({
   );
 }
 
+function SwitchSignature({ via, signer, messageId }: { via?: string | null; signer: string; messageId?: string | null }) {
+  if (via !== "switch_gate") return <span>{signer}</span>;
+  return (
+    <span className="inline-flex flex-wrap items-center gap-1">
+      <span className="px-1.5 py-0.5 rounded-sm bg-sky-50 border border-sky-200 text-sky-800 font-semibold">
+        Signed in Switch
+      </span>
+      <span>@{signer}</span>
+      {messageId && <span className="font-mono text-slate-500">{messageId}</span>}
+    </span>
+  );
+}
+
 function DispositionRow({ disposition }: { disposition: HumanDisposition }) {
   return (
     <li
@@ -353,7 +366,12 @@ function DispositionRow({ disposition }: { disposition: HumanDisposition }) {
         )}
       </div>
       <div className={`text-xs text-slate-600 ${disposition.superseded ? "line-through" : ""}`}>
-        {disposition.authorized_by} · {new Date(disposition.decided_at).toLocaleString()}
+        <SwitchSignature
+          via={disposition.authorized_via}
+          signer={disposition.authorized_by}
+          messageId={disposition.switch_message_id}
+        />{" "}
+        · {new Date(disposition.decided_at).toLocaleString()}
       </div>
       <div className={`text-slate-700 ${disposition.superseded ? "line-through" : ""}`}>
         {disposition.decision_reason}
@@ -392,6 +410,10 @@ function MovementCard({ movement }: { movement: MovementNode }) {
         <span>{formatQuantity(movement.quantity_in, movement.quantity_unit)}</span>
         <ArrowRight className="size-3 text-slate-400" />
         <span>{formatQuantity(movement.quantity_out, movement.quantity_unit)}</span>
+      </div>
+      <div className="text-xs text-slate-600">
+        <SwitchSignature via={movement.authorized_via} signer={movement.operator_id} messageId={movement.switch_message_id} />{" "}
+        · {new Date(movement.timestamp).toLocaleString()}
       </div>
       {losses.length > 0 && (
         <div className="flex flex-wrap gap-2">
