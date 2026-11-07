@@ -120,7 +120,7 @@ export const AIModel = ({
               Confidence Decision Threshold
             </span>
             <span className="text-xs text-gray-500 font-sans">
-              Ambang batas keyakinan model sebelum sistem memicu aktuator reject/conditional.
+              Model confidence threshold before the system triggers the reject or conditional actuator.
             </span>
           </div>
           <div className="px-2.5 py-1 bg-rose-50 border border-rose-200 rounded-sm">
@@ -152,10 +152,10 @@ export const AIModel = ({
       <div className="pt-4 border-t border-slate-200 flex flex-col gap-3">
         <div>
           <span className="text-sm font-bold font-sans text-zinc-900 block">
-            Taksonomi 4 Kelas Cacat Permukaan (YOLOv8s Defects)
+            4-Class Surface Defect Taxonomy (YOLOv8s)
           </span>
           <span className="text-xs text-gray-500 font-sans">
-            Seluruh kelas telah diselaraskan dengan dataset hasil training di models/model_2.
+            All classes match the training dataset in models/model_2.
           </span>
         </div>
 

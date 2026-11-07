@@ -75,13 +75,13 @@ export const RecentInspections = ({ lots: propLots, isLoading = false }: RecentI
         {isFetching ? (
           <div className="h-full flex flex-col items-center justify-center gap-2 text-gray-500 py-12">
             <Loader2 className="size-6 animate-spin text-sky-500" />
-            <span className="text-xs font-sans">Memuat riwayat inspeksi terbaru...</span>
+            <span className="text-xs font-sans">Loading recent inspections...</span>
           </div>
         ) : activeLots.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center gap-2 text-gray-500 py-12">
             <Inbox className="size-8 text-slate-300" />
-            <p className="text-sm font-medium font-sans text-zinc-700">Belum ada inspeksi yang dicatat hari ini.</p>
-            <p className="text-xs font-sans text-gray-400">Jalankan inspeksi di menu &quot;Inspection&quot; untuk melihat log QC di sini.</p>
+            <p className="text-sm font-medium font-sans text-zinc-700">No inspections recorded today.</p>
+            <p className="text-xs font-sans text-gray-400">Run an inspection from the &quot;Inspection&quot; menu to see the QC log here.</p>
           </div>
         ) : (
           <table className="w-full border-collapse">
@@ -91,7 +91,7 @@ export const RecentInspections = ({ lots: propLots, isLoading = false }: RecentI
                 <th className={`${TH_CLASS} w-24 text-center`}>Grade</th>
                 <th className={`${TH_CLASS} w-28`}>Decision</th>
                 <th className={`${TH_CLASS} w-28`}>Confidence</th>
-                <th className={`${TH_CLASS} w-28 text-right`}>Waktu</th>
+                <th className={`${TH_CLASS} w-28 text-right`}>Time</th>
               </tr>
             </thead>
             <tbody>

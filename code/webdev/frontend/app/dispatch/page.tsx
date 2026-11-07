@@ -245,7 +245,7 @@ export default function DispatchPage() {
                   <td colSpan={7} className="px-4 py-16 text-center text-gray-500">
                     <div className="flex flex-col items-center justify-center gap-2">
                       <Loader2 className="size-6 animate-spin text-sky-600" />
-                      <span className="text-xs font-medium font-sans">Memuat catatan pengiriman...</span>
+                      <span className="text-xs font-medium font-sans">Loading dispatch records...</span>
                     </div>
                   </td>
                 </tr>
@@ -255,10 +255,10 @@ export default function DispatchPage() {
                     <div className="flex flex-col items-center justify-center gap-2">
                       <Inbox className="size-8 text-slate-300" />
                       <span className="text-sm font-semibold font-sans text-zinc-700">
-                        Belum ada catatan pengiriman yang sesuai.
+                        No matching dispatch records yet.
                       </span>
                       <span className="text-xs font-sans text-gray-400">
-                        Klik "+ New Dispatch" untuk membuat catatan ekspor baru.
+                        Click "+ New Dispatch" to create a new export record.
                       </span>
                     </div>
                   </td>

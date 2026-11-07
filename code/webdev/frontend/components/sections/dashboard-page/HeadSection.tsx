@@ -64,8 +64,8 @@ export function HeadSection({ stats: propStats, isLoading = false }: HeadSection
       <StatCard
         title="Total Inspected Today"
         value={isFetching ? "..." : totalInspected}
-        unit="ikan"
-        subtext={`Lot Aktif: ${currentLot}`}
+        unit="fish"
+        subtext={`Active lot: ${currentLot}`}
         icon={<BriefcaseConveyorBelt className="size-5 text-sky-700" />}
       />
 

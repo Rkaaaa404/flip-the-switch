@@ -133,7 +133,7 @@ export const ResultDetail = ({ lotId }: ResultDetailProps) => {
     return (
       <div className="w-full bg-white rounded-lg shadow-xs outline outline-1 outline-slate-300 p-16 flex flex-col items-center justify-center gap-3">
         <Loader2 className="size-8 animate-spin text-sky-600" />
-        <p className="text-sm font-semibold font-sans text-zinc-800">Memuat Detail Lot {lotId}...</p>
+        <p className="text-sm font-semibold font-sans text-zinc-800">Loading Lot {lotId}...</p>
       </div>
     );
   }
@@ -143,9 +143,9 @@ export const ResultDetail = ({ lotId }: ResultDetailProps) => {
       <div className="w-full bg-white rounded-lg shadow-xs outline outline-1 outline-slate-300 p-16 flex flex-col items-center justify-center gap-4 text-center">
         <Inbox className="size-10 text-slate-300" />
         <div>
-          <h2 className="text-lg font-bold font-sans text-zinc-900">Catatan Lot Tidak Ditemukan</h2>
+          <h2 className="text-lg font-bold font-sans text-zinc-900">Lot Record Not Found</h2>
           <p className="text-xs font-sans text-gray-500 mt-1">
-            Lot ID &quot;{lotId}&quot; tidak tersimpan di database audit inspeksi.
+            Lot ID &quot;{lotId}&quot; is not in the inspection audit database.
           </p>
         </div>
         <Link
@@ -153,7 +153,7 @@ export const ResultDetail = ({ lotId }: ResultDetailProps) => {
           className="inline-flex items-center gap-2 px-4 py-2 bg-sky-700 text-white text-xs font-bold font-sans rounded-sm hover:bg-sky-800 transition-colors"
         >
           <ArrowLeft className="size-3.5" />
-          <span>Kembali ke Daftar Riwayat</span>
+          <span>Back to History</span>
         </Link>
       </div>
     );
@@ -276,7 +276,7 @@ export const ResultDetail = ({ lotId }: ResultDetailProps) => {
             ) : (
               <div className="flex flex-col items-center justify-center gap-2 text-slate-400 p-12">
                 <Inbox className="size-10" />
-                <span className="text-xs font-mono">Snapshot citra tidak tersedia</span>
+                <span className="text-xs font-mono">Snapshot not available</span>
               </div>
             )}
           </div>
@@ -350,7 +350,7 @@ export const ResultDetail = ({ lotId }: ResultDetailProps) => {
                   value={inspectorNote}
                   onChange={(e) => setInspectorNote(e.target.value)}
                   onBlur={handleSaveNote}
-                  placeholder='Catatan supervisor (misal: "Batch dari cold storage lot #C-22")'
+                  placeholder='Supervisor note (e.g. "Batch from cold storage lot #C-22")'
                   className="flex-1 bg-slate-50 border border-slate-200 rounded-sm px-3 py-2 text-xs font-sans text-zinc-800 focus:bg-white focus:outline-sky-600 transition-colors"
                 />
                 <button
@@ -358,7 +358,7 @@ export const ResultDetail = ({ lotId }: ResultDetailProps) => {
                   onClick={handleSaveNote}
                   disabled={isSavingNote}
                   className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-zinc-700 border border-slate-300 rounded-sm text-xs font-bold font-sans transition-colors cursor-pointer flex items-center gap-1"
-                  title="Simpan Catatan"
+                  title="Save Note"
                 >
                   {isSavingNote ? <Loader2 className="size-3.5 animate-spin" /> : <Save className="size-3.5" />}
                   <span>Save</span>
@@ -455,7 +455,7 @@ export const ResultDetail = ({ lotId }: ResultDetailProps) => {
                 ) : (
                   <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-md text-xs font-sans text-emerald-800 flex items-center gap-2">
                     <Check className="size-4 text-emerald-600 shrink-0" />
-                    <span>Tidak ada cacat permukaan terdeteksi (Clean).</span>
+                    <span>No surface defects detected (clean).</span>
                   </div>
                 )}
               </div>
@@ -552,14 +552,14 @@ export const ResultDetail = ({ lotId }: ResultDetailProps) => {
             </div>
 
             <p className="text-xs font-sans text-gray-600">
-              Sebagai supervisor QC, Anda dapat mengubah status keputusan AI untuk lot{" "}
+              As QC supervisor, you can change the AI decision for lot{" "}
               <strong className="font-mono">{lot.lotId || lot.lot_id}</strong>.
             </p>
 
             <div className="flex flex-col gap-3">
               <div>
                 <label className="text-xs font-bold font-sans text-gray-700 block mb-1">
-                  Keputusan Baru (New Decision)
+                  New Decision
                 </label>
                 <div className="grid grid-cols-3 gap-2">
                   {(["PASS", "CONDITIONAL", "FAIL"] as const).map((d) => (
@@ -585,14 +585,14 @@ export const ResultDetail = ({ lotId }: ResultDetailProps) => {
 
               <div>
                 <label className="text-xs font-bold font-sans text-gray-700 block mb-1">
-                  Alasan Override (Audit Trail Note)
+                  Override Reason (Audit Trail Note)
                 </label>
                 <textarea
                   value={overrideReason}
                   onChange={(e) => setOverrideReason(e.target.value)}
                   rows={3}
                   className="w-full bg-slate-50 border border-slate-300 rounded-sm p-2.5 text-xs font-sans text-zinc-900 focus:bg-white focus:outline-sky-600"
-                  placeholder="Jelaskan alasan verifikasi visual manual..."
+                  placeholder="Explain the reason from your manual visual check..."
                 />
               </div>
             </div>
@@ -603,7 +603,7 @@ export const ResultDetail = ({ lotId }: ResultDetailProps) => {
                 onClick={() => setIsOverrideModalOpen(false)}
                 className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-zinc-700 rounded-sm text-xs font-bold font-sans transition-colors cursor-pointer"
               >
-                Batal
+                Cancel
               </button>
               <button
                 type="button"

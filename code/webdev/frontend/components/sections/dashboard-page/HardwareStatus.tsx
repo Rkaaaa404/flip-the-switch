@@ -98,7 +98,7 @@ export const HardwareStatus = ({ status: propStatus, isLoading = false }: Hardwa
           <div className="flex flex-col">
             <span className="text-xs font-bold font-mono text-zinc-800">ENABLE_MOCK_HARDWARE</span>
             <span className="text-[11px] font-sans text-gray-500">
-              {mockEnabled ? "Simulasi GPIO lokal aktif" : "Mode Pin GPIO Fisik"}
+              {mockEnabled ? "Local GPIO simulation active" : "Physical GPIO pin mode"}
             </span>
           </div>
           <Switch

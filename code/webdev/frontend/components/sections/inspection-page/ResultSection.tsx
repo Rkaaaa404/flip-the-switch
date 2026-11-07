@@ -15,14 +15,14 @@ const decisionConfig: Record<string, { bg: string; text: string; border: string;
     bg: "bg-green-50",
     text: "text-green-700",
     border: "border-green-300",
-    label: "PASS (Lolos Mutu)",
+    label: "PASS (Meets Quality)",
     icon: <Check className="size-6 text-green-700 stroke-[3]" />,
   },
   CONDITIONAL: {
     bg: "bg-amber-50",
     text: "text-amber-700",
     border: "border-amber-300",
-    label: "CONDITIONAL (Verifikasi Operator)",
+    label: "CONDITIONAL (Operator Check)",
     icon: <AlertTriangle className="size-6 text-amber-700 stroke-[2.5]" />,
   },
   FAIL: {
@@ -79,7 +79,7 @@ export const ResultSection = ({ result, isLoading = false }: ResultSectionProps)
         <div className="max-w-xs">
           <h3 className="text-base font-bold font-sans text-zinc-900">Menunggu Sampel Inspeksi</h3>
           <p className="text-xs font-sans text-gray-500 mt-1">
-            Unggah citra ikan atau pilih sampel demo di panel sebelah kiri, lalu klik &quot;Jalankan Inspeksi AI&quot;.
+            Upload a fish image or pick a demo sample on the left, then click &quot;Run AI Inspection&quot;.
           </p>
         </div>
       </div>
@@ -93,7 +93,7 @@ export const ResultSection = ({ result, isLoading = false }: ResultSectionProps)
         <div className="size-14 rounded-full bg-sky-100 flex items-center justify-center text-sky-500">
           <Sparkles className="size-7 animate-spin" />
         </div>
-        <p className="text-sm font-bold font-sans text-sky-800">Sedang Menganalisis Citra Ikan...</p>
+        <p className="text-sm font-bold font-sans text-sky-800">Analyzing the Fish Image...</p>
         <p className="text-xs font-mono text-gray-400">Menghitung matriks kesegaran & lokalisasi cacat visual</p>
       </div>
     );
@@ -217,7 +217,7 @@ export const ResultSection = ({ result, isLoading = false }: ResultSectionProps)
           ) : (
             <div className="p-3 w-full bg-emerald-50 border border-emerald-200 rounded-md text-xs font-sans text-emerald-800 flex items-center gap-2">
               <Check className="size-4 text-emerald-600" />
-              <span>Tidak ada cacat atau penyakit permukaan yang terdeteksi (Permukaan Bersih).</span>
+              <span>No surface defects detected (clean surface).</span>
             </div>
           )}
         </div>
@@ -232,7 +232,7 @@ export const ResultSection = ({ result, isLoading = false }: ResultSectionProps)
           <span className="text-sm font-bold font-sans text-zinc-900">
             {signal === "GREEN" && "Conveyor Running (Lolos Sortir)"}
             {signal === "YELLOW" && "Conveyor Slow (Pemeriksaan Manual)"}
-            {signal === "RED" && "Conveyor Reject / Ejector Aktif"}
+            {signal === "RED" && "Conveyor Reject / Ejector Active"}
           </span>
         </div>
         <TowerLight signal={signal as "GREEN" | "YELLOW" | "RED"} />

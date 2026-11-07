@@ -94,11 +94,11 @@ export const TableSection = ({
       {/* Stats Summary Bar */}
       <div className="flex items-center justify-between pb-2 border-b border-slate-200 text-xs font-sans text-gray-600">
         <div>
-          <span>Menampilkan </span>
+          <span>Showing </span>
           <span className="font-bold text-zinc-900">{lots.length}</span>
-          <span> dari </span>
+          <span> of </span>
           <span className="font-bold text-zinc-900">{total}</span>
-          <span> rekaman log inspeksi</span>
+          <span> inspection records</span>
         </div>
 
         <div className="flex items-center gap-3">
@@ -123,7 +123,7 @@ export const TableSection = ({
                 Timestamp
               </th>
               <th className="w-36 px-4 py-3 text-left text-xs font-bold font-sans uppercase tracking-wider text-gray-600">
-                Jenis Ikan
+                Fish Type
               </th>
               <th className="w-24 px-4 py-3 text-center text-xs font-bold font-sans uppercase tracking-wider text-gray-600">
                 Grade (SNI)
@@ -132,7 +132,7 @@ export const TableSection = ({
                 Defects Detected
               </th>
               <th className="w-32 px-4 py-3 text-left text-xs font-bold font-sans uppercase tracking-wider text-gray-600">
-                Keputusan
+                Decision
               </th>
               <th className="w-24 px-4 py-3 text-left text-xs font-bold font-sans uppercase tracking-wider text-gray-600">
                 Confidence
@@ -149,7 +149,7 @@ export const TableSection = ({
                 <td colSpan={8} className="px-4 py-16 text-center text-gray-500">
                   <div className="flex flex-col items-center justify-center gap-2">
                     <Loader2 className="size-7 animate-spin text-sky-600" />
-                    <span className="text-xs font-medium font-sans">Memuat data log inspeksi...</span>
+                    <span className="text-xs font-medium font-sans">Loading inspection log...</span>
                   </div>
                 </td>
               </tr>
@@ -159,10 +159,10 @@ export const TableSection = ({
                   <div className="flex flex-col items-center justify-center gap-2">
                     <Inbox className="size-8 text-slate-300" />
                     <span className="text-sm font-semibold font-sans text-zinc-700">
-                      Tidak ada catatan yang sesuai dengan filter.
+                      No records match the filters.
                     </span>
                     <span className="text-xs font-sans text-gray-400">
-                      Coba reset kata kunci pencarian atau jenis ikan.
+                      Try clearing the search or the fish type.
                     </span>
                   </div>
                 </td>
@@ -221,7 +221,7 @@ export const TableSection = ({
                             : "bg-emerald-50 text-emerald-700 border-emerald-200"
                         }`}
                       >
-                        {rowDefects} Cacat
+                        {rowDefects} Defects
                       </span>
                     </td>
 
@@ -255,7 +255,7 @@ export const TableSection = ({
         {/* Pagination Footer */}
         <div className="px-4 py-3 bg-slate-50/80 border-t border-slate-200 flex items-center justify-between">
           <span className="text-xs font-sans text-gray-500">
-            Halaman <span className="font-bold text-zinc-900">{page}</span> dari{" "}
+            Page <span className="font-bold text-zinc-900">{page}</span> of{" "}
             <span className="font-bold text-zinc-900">{Math.max(1, totalPages)}</span>
           </span>
 
