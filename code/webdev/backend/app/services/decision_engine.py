@@ -25,18 +25,18 @@ class DecisionEngine:
 
         # Rule 1: Immediate Reject (FAIL)
         if grade == "C":
-            return "FAIL", "RED", "Grade C: Kondisi mata/insang mengindikasikan ikan tidak segar (reject)."
+            return "FAIL", "RED", "Grade C: eye and gill condition indicates the fish is not fresh (reject)."
             
         if defects_count > 0:
             defect_labels = ", ".join(list(set([d.get("label", "defek") for d in defects])))
-            return "FAIL", "RED", f"Terdeteksi {defects_count} kecacatan fisik/kontaminasi ({defect_labels})."
+            return "FAIL", "RED", f"{defects_count} visible defect(s) detected ({defect_labels})."
 
         # Rule 2: Secondary Inspection (CONDITIONAL)
         if grade == "B" and grade_confidence < confidence_threshold:
-            return "CONDITIONAL", "YELLOW", "Grade B dengan tingkat keyakinan moderat. Disarankan verifikasi visual operator."
+            return "CONDITIONAL", "YELLOW", "Grade B with moderate confidence. Operator visual check recommended."
 
         # Rule 3: Quality Passed (PASS)
         if grade in ["A", "B"]:
-            return "PASS", "GREEN", f"Kualitas ikan memenuhi standar kelayakan ekspor (Grade {grade})."
+            return "PASS", "GREEN", f"Fish meets the export quality standard (Grade {grade})."
 
-        return "FAIL", "RED", "Kondisi tidak memenuhi standar mutu minimum."
+        return "FAIL", "RED", "Does not meet the minimum quality standard."

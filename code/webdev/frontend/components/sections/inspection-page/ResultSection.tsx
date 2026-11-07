@@ -3,7 +3,7 @@
 import React from "react";
 import { Check, X, AlertTriangle, Clock, ShieldCheck, Sparkles, Inbox } from "lucide-react";
 import { TowerLight } from "@/components/common/TowerLight";
-import { InspectionResult } from "@/types";
+import { InspectionResult, defectName } from "@/types";
 
 interface ResultSectionProps {
   result?: InspectionResult | null;
@@ -187,7 +187,7 @@ export const ResultSection = ({ result, isLoading = false }: ResultSectionProps)
             Defect Detection (Model 2 YOLOv8s)
           </h3>
           <span className="text-xs font-mono font-semibold px-2 py-0.5 bg-slate-100 rounded-sm text-gray-700">
-            {result.defects?.length || 0} Cacat Terdeteksi
+            {result.defects?.length || 0} Defects Detected
           </span>
         </div>
 
@@ -209,7 +209,7 @@ export const ResultSection = ({ result, isLoading = false }: ResultSectionProps)
                   key={`${defect.label}-${index}`}
                   className={`px-3 py-1.5 rounded-md border ${bStyle.border} ${bStyle.bg} flex items-center gap-1.5 text-xs font-mono ${bStyle.text}`}
                 >
-                  <span className="font-bold">{defect.label}</span>
+                  <span className="font-bold">{defectName(defect.label)}</span>
                   <span className="opacity-75 font-semibold">({defConf}%)</span>
                 </div>
               );

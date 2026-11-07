@@ -16,6 +16,17 @@ import urllib.parse
 import urllib.request
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+# The defect model's classes have Indonesian ids; people see these English names.
+LABEL_EN = {
+    "sisik_sisa": "scale damage",
+    "warna_abnormal": "red lesion",
+    "luka_robekan": "open wound",
+    "lendir_berlebih": "excess mucus",
+}
+
+
+def name(label_id: str) -> str:
+    return LABEL_EN.get(label_id, label_id.replace("_", " "))
 
 
 def _load_env() -> None:
@@ -81,9 +92,9 @@ def cmd_show(a):
         views = {v["view_side"]: v for v in f["views"]}
         fish.append({
             "seq": f["sequence_in_delivery"], "status": f["status"], "flagged": f["flagged_for_review"],
-            "flag_reasons": f["flag_reasons"],
+            "flag_reasons": [name(r) for r in f["flag_reasons"]],
             "views": {side: {"view_id": v["id"], "grade": v["freshness_grade"], "mode": v["inference_mode"],
-                             "defects": [f"{x['label']} {x['confidence']:.2f}" for x in v["defects"]]}
+                             "defects": [f"{name(x['label'])} {x['confidence']:.2f}" for x in v["defects"]]}
                       for side, v in views.items()},
         })
     out({"delivery": d["delivery"], "fish": fish,
@@ -112,7 +123,7 @@ def cmd_flagged(a):
             with open(path, "wb") as fh:
                 fh.write(img)
             saved.append({"seq": f["sequence_in_delivery"], "side": v["view_side"], "path": path,
-                          "defects": [f"{x['label']} {x['confidence']:.2f}" for x in v["defects"]],
+                          "defects": [f"{name(x['label'])} {x['confidence']:.2f}" for x in v["defects"]],
                           "grade": v["freshness_grade"]})
         if not f["views"]:
             saved.append({"seq": f["sequence_in_delivery"], "side": None, "path": None, "note": f["status"]})

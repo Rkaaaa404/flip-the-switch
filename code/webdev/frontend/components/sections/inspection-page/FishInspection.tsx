@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { runInspection } from "@/lib/api";
-import { InspectionResult } from "@/types";
+import { InspectionResult, defectName } from "@/types";
 
 export const FISH_TYPES = [
   { id: "Tuna", label: "Tuna (Thunnini / Tuna)" },
@@ -404,7 +404,7 @@ export const FishInspection = ({
                       <span
                         className={`absolute -top-5 left-0 px-1.5 py-0.5 text-[10px] font-mono font-bold ${styleInfo.bg} ${styleInfo.text} rounded-xs shadow-sm whitespace-nowrap`}
                       >
-                        {defect.label} {(defect.confidence * 100).toFixed(0)}%
+                        {defectName(defect.label)} {(defect.confidence * 100).toFixed(0)}%
                       </span>
                     </div>
                   );

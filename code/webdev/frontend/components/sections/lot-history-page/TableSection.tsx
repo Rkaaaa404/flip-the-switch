@@ -129,7 +129,7 @@ export const TableSection = ({
                 Grade (SNI)
               </th>
               <th className="w-36 px-4 py-3 text-left text-xs font-bold font-sans uppercase tracking-wider text-gray-600">
-                Cacat Terdeteksi
+                Defects Detected
               </th>
               <th className="w-32 px-4 py-3 text-left text-xs font-bold font-sans uppercase tracking-wider text-gray-600">
                 Keputusan

@@ -25,7 +25,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { fetchLotById, updateLotNote, overrideLotDecision } from "@/lib/api";
-import { LotRecord, Defect } from "@/types";
+import { LotRecord, Defect, defectName } from "@/types";
 
 const DEFECT_COLOR_MAP: Record<string, { border: string; bg: string; text: string; label: string; bar: string }> = {
   sisik_sisa: { border: "border-red-600", bg: "bg-red-600", text: "text-white", label: "sisik_sisa", bar: "bg-red-600" },
@@ -265,7 +265,7 @@ export const ResultDetail = ({ lotId }: ResultDetailProps) => {
                           <span
                             className={`absolute -top-5 left-0 px-1.5 py-0.5 text-[10px] font-mono font-bold ${styleInfo.bg} ${styleInfo.text} rounded-xs shadow-sm whitespace-nowrap`}
                           >
-                            {styleInfo.label} {defConf}%
+                            {defectName(defect.label)} {defConf}%
                           </span>
                         </div>
                       );

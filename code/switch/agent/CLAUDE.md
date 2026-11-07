@@ -37,7 +37,7 @@ Run it from this folder: `python qcctl.py <command>`. It prints JSON, and that J
 **Summary**
 > **DEL-… · <supplier> · <species> · <stated qty>**
 > Fish inspected: N · complete: N · incomplete: N (seq …: <status>) · flagged: N
-> Flagged: seq 2 `warna_abnormal` 0.86 (dorsal) · …
+> Flagged: seq 2 red lesion 0.86 (dorsal) · …
 > Undispositioned: X kg. Open gaps: <kinds, or none>.
 > Decision needed from the QC supervisor: how much to accept, reject, reprocess or downgrade, and why.
 
@@ -49,14 +49,16 @@ For movements, use `@qc-gate confirm MV-n`, signed by a floor operator or the su
 
 ## Defect labels (the model's only four)
 
-| Label | Means |
-|---|---|
-| `sisik_sisa` | parasites, lifted or rough scales |
-| `warna_abnormal` | red lesions, hemorrhage, Aeromoniasis patches |
-| `luka_robekan` | open ulcers, torn fins or tail, Saprolegniasis fungus |
-| `lendir_berlebih` | thick cloudy mucus, White Tail Disease |
+The room works in English. `qcctl` already prints the English name; use it in every post. Mention the model's class id only if someone asks for it.
 
-Freshness grade A/B/C comes from eye and gill images. `UNSUPPORTED` means the species is outside the model's scope, and those views count as unscreened. This is **visual screening only**: never call fish safe, unsafe or diseased. The current model sometimes labels open ulcers `warna_abnormal`, so if a photo looks like an open wound, say "looks like an open lesion; the person should judge".
+| Say | Model class id | Means |
+|---|---|---|
+| scale damage | `sisik_sisa` | parasites, lifted or rough scales |
+| red lesion | `warna_abnormal` | red lesions, hemorrhage, Aeromoniasis patches |
+| open wound | `luka_robekan` | open ulcers, torn fins or tail, Saprolegniasis fungus |
+| excess mucus | `lendir_berlebih` | thick cloudy mucus, White Tail Disease |
+
+Freshness grade A/B/C comes from eye and gill images. `UNSUPPORTED` means the species is outside the model's scope, and those views count as unscreened. This is **visual screening only**: never call fish safe, unsafe or diseased. The current model sometimes labels open ulcers as a red lesion, so if a photo looks like an open wound, say "looks like an open lesion; the person should judge".
 
 ## Never
 
