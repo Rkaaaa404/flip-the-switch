@@ -1,86 +1,58 @@
-# 🏷️ Panduan Anotasi & Taksonomi Kelas NusaQC Model 2 (Fish Defect Detector)
+# Model 2 Annotation Guide: Surface Defect Classes
 
-Dokumen ini adalah panduan acuan visual untuk melakukan anotasi & verifikasi *Bounding Box* pada **Model 2 NusaQC** (Surface Contamination & Defect Detector).
+The visual reference for drawing and checking bounding boxes for Model 2, the surface defect detector. The class ids are Indonesian and are kept as stored ids. The English label in brackets is what the Receiving QC Room shows.
 
----
+## The four classes
 
-## 📌 Ringkasan 4 Kelas Standar NusaQC
+| Id | Class | Hotkey | Label color | In short |
+|---|---|---|---|---|
+| 0 | `sisik_sisa` (scale damage) | `1` | Orange | Attached parasites, parasite spots, loose or rough scales |
+| 1 | `warna_abnormal` (red lesion) | `2` | Red | Red lesions, skin hemorrhage, Aeromonas patches, gill inflammation |
+| 2 | `luka_robekan` (open wound) | `3` | Yellow | Ulcers, torn fins or tail (fin rot), *Saprolegnia* fungus |
+| 3 | `lendir_berlebih` (excess mucus) | `4` | Purple | Thick cloudy mucus, white tail disease (WTD), excess white mucus |
 
-| ID | Nama Kelas | Hotkey | Warna Label | Definisi Singkat |
-|:--:|:---|:---:|:---:|:---|
-| **0** | `sisik_sisa` | `1` | 🟠 Oranye | Parasit menempel, bintik parasit, sisa sisik mengelupas/kasar |
-| **1** | `warna_abnormal` | `2` | 🔴 Merah | Lesi merah, pendarahan kulit, bercak Aeromoniasis, peradangan insang |
-| **2** | `luka_robekan` | `3` | 🟡 Kuning | Ulserasi (luka terbuka), sirip/ekor robek (fin rot), jamur Saprolegniasis |
-| **3** | `lendir_berlebih` | `4` | 🟣 Ungu | Lendir tebal keruh, White Tail Disease (WTD), mukus putih berlebih |
+These match the Label Studio template [`02_label_studio_config.xml`](02_label_studio_config.xml) one to one.
 
----
+## Visual criteria
 
-## 🔍 Detail Kriteria Visual per Kelas
+### 0. `sisik_sisa`: scale damage (orange)
 
-### 1. `sisik_sisa` (Class ID 0) — 🟠 Oranye
-* **Deskripsi Visual**: 
-  - Adanya parasit menempel pada permukaan badan/bersisik ikan (misal: *Argulus* / kutu ikan, *Anchor worm* / cacing jangkar).
-  - Sisik yang terlepas sebagian, mencuat, atau tekstur sisik rusak kasar berantakan.
-  - Bintik-bintik putih/hitam kecil terlokalisasi akibat serangga/parasit akuakultur.
-* **Termasuk dalam kelas ini**:
-  - `Parasitic diseases` (PD) dari Roboflow & HF.
-  - Cacing/kutu fisik yang terlihat di permukaan tubuh ikan.
-* **Aturan Bounding Box**:
-  - Buat bbox ketat mengelilingi area parasit atau kelompok sisik yang mencuat.
+- Parasites attached to the body or scales, such as *Argulus* (fish lice) or anchor worm.
+- Scales partly detached, sticking out, or roughly damaged.
+- Small, localized white or black spots caused by parasites.
 
----
+**Includes:** parasitic diseases (PD) from Roboflow and Hugging Face; worms or lice visible on the body.
+**Box:** tight around the parasite or the group of raised scales.
 
-### 2. `warna_abnormal` (Class ID 1) — 🔴 Merah
-* **Deskripsi Visual**:
-  - Ruam kemerahan, bintik merah (*red spot*), pendarahan di bawah kulit/sisik (*hemorrhage*).
-  - Pembengkakan merah akibat infeksi bakteri *Aeromonas* (Aeromoniasis).
-  - Perubahan warna insang atau kulit tidak wajar (pudar/lebam/kehitaman lokal).
-* **Termasuk dalam kelas ini**:
-  - `Bacterial Red disease` (BRD)
-  - `Aeromoniasis` (BDA)
-  - `Bacterial gill disease` (BGD)
-  - Discoloration / kemerahan pada area perut/punggung.
-* **Aturan Bounding Box**:
-  - Buat bbox melingkupi seluruh area bercak kemerahan/peradangan warna kulit.
+### 1. `warna_abnormal`: red lesion (red)
 
----
+- Red rash, red spots, bleeding under the skin or scales (hemorrhage).
+- Red swelling from *Aeromonas* infection.
+- Abnormal gill or skin color: faded, bruised or locally dark.
 
-### 3. `luka_robekan` (Class ID 2) — 🟡 Kuning
-* **Deskripsi Visual**:
-  - **Luka Terbuka (Ulcer)**: Daging ikan terlihat robek, berlubang, atau terkelupas sampai lapisan dalam.
-  - **Cacat Sirip/Ekor (Fin Rot / Tail Rot)**: Sirip dada, punggung, atau ekor gerabah, robek, atau putus.
-  - **Infeksi Jamur (Saprolegniasis)**: Serabut benang putih/abu-abu seperti benang kapas yang tumbuh melingkupi luka robekan.
-* **Termasuk dalam kelas ini**:
-  - `Fungal diseases Saprolegniasis` (FDS)
-  - `Skin Ulcer` / `Tail Rot` / `Fin Rot`
-  - Robekan akibat benturan fisik / jaringan terputus.
-* **Aturan Bounding Box**:
-  - Melingkupi area jaringan yang robek/berlubang dan benang jamur di sekitarnya.
+**Includes:** Bacterial Red Disease (BRD), Aeromoniasis (BDA), Bacterial Gill Disease (BGD), redness on the belly or back.
+**Box:** around the whole red or inflamed area.
 
----
+### 2. `luka_robekan`: open wound (yellow)
 
-### 4. `lendir_berlebih` (Class ID 3) — 🟣 Ungu
-* **Deskripsi Visual**:
-  - Lapisan mukus/lendir yang sangat tebal, keruh, atau memutih di permukaan badan/ekor ikan.
-  - **White Tail Disease (WTD)**: Ekor atau tubuh bagian belakang menjadi pucat/putih keruh karena penumpukan lendir pekat akibat infeksi virus/bakteri.
-  - Bercak putih menyebar (bukan serabut benang jamur) berupa selaput lendir.
-* **Termasuk dalam kelas ini**:
-  - `White tail disease` (WTD)
-  - `Excess mucus` / lapisan lendir abnormal.
-* **Aturan Bounding Box**:
-  - Melingkupi area selaput lendir keruh/putih yang menutupi bagian tubuh ikan.
+- **Ulcer:** flesh torn, holed or peeled down to the inner layer.
+- **Fin or tail rot:** pectoral, dorsal or tail fins ragged, torn or missing.
+- **Fungus (*Saprolegnia*):** white or grey cotton-like threads growing over a wound.
 
----
+**Includes:** Fungal Disease Saprolegniasis (FDS), skin ulcer, tail rot, fin rot, tears from physical impact.
+**Box:** around the torn or holed tissue and any fungus threads around it.
 
-## 🛑 Aturan Khusus (Edge Cases & Boundary Rules)
+### 3. `lendir_berlebih`: excess mucus (purple)
 
-1. **Ikan Sehat (`Healthy Fish`)**:
-   - Jika citra adalah ikan sehat tanpa cacat/penyakit, **JANGAN buat Bounding Box sama sekali** (biarkan label kosong/empty background).
+- A very thick, cloudy or whitish mucus layer on the body or tail.
+- **White tail disease (WTD):** the tail or rear body turns pale or cloudy white from built-up mucus after a viral or bacterial infection.
+- Spreading white patches that form a film, not fungal threads.
 
-2. **Tumpang Tindih Defek (Overlap)**:
-   - Jika ada daerah luka robek yang *sekaligus* ada pendarahan merah disekitarnya, prioritaskan **`luka_robekan`** jika jaringan daging rusak/berlubang.
-   - Jika hanya berupa ruam/merah tanpa luka terbuka, tandai sebagai **`warna_abnormal`**.
+**Includes:** white tail disease (WTD), excess or abnormal mucus.
+**Box:** around the cloudy or white mucus film.
 
-3. **Perbedaan Jamur vs Lendir**:
-   - **Jamur (`luka_robekan`)**: Berbentuk serabut seperti **kapas/benang timbul** yang menancap pada luka.
-   - **Lendir (`lendir_berlebih`)**: Berbentuk **lapisan selaput licin/keruh memutih** yang merata di permukaan kulit/ekor.
+## Edge cases
+
+1. **Healthy fish:** draw **no box at all**. Leave the label empty (background).
+2. **Overlapping defects:** if a wound is surrounded by redness, label it `luka_robekan` when the flesh is damaged or holed. Redness without an open wound is `warna_abnormal`.
+3. **Fungus or mucus:** fungus (`luka_robekan`) is **raised, cotton-like threads** attached to a wound. Mucus (`lendir_berlebih`) is a **smooth, cloudy white film** spread evenly over the skin or tail.

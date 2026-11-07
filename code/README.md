@@ -1,53 +1,46 @@
-# 🐟 NusaQC — Quality Control & Delivery Traceability System
-> **Flip the Switch Hackathon**
+# NusaQC Code
 
-NusaQC adalah sistem inspeksi mutu dan pemilah otomatis berbasis Computer Vision yang dirancang untuk mengoptimalkan proses Quality Control (QC) dan rantai keterlacakan digital (*traceability*) di lini sortasi Unit Pengolahan Ikan (UPI) ekspor Indonesia.
+Everything that runs. For what the Receiving QC Room is, how to set it up and the demo, see the [main README](../README.md).
 
-Sistem ini memadukan **dua arsitektur AI modular**:
-1. **Model 1 (Kesegaran Ikan / Freshness Assessment)**: Deep Feature Extractor (ResNet50 / MobileNetV3) + Classifier untuk klasifikasi grade kesegaran (Grade A / B / C) berdasarkan indikator visual organoleptik SNI 2729:2013.
-2. **Model 2 (Deteksi Defek & Kontaminasi / Defect Detection)**: Fine-tuned YOLOv8 Object Detection dengan pseudo-labeling otomatis (3.200+ citra) untuk mendeteksi cacat fisik visual & kontaminasi permukaan.
----
+NusaQC is a computer-vision QC system for Indonesian export fish processing plants. It combines two models:
 
-## 🗂️ Struktur Direktori Project
+1. **Freshness (Model 1):** MobileNetV3-Small grades a fish A, B or C against the visual criteria of SNI 2729:2013.
+2. **Surface defects (Model 2):** YOLOv8s, trained on 3,200+ images with pseudo-labels, boxes scale damage, red lesions, open wounds and excess mucus.
+
+## Layout
 
 ```text
 code/
-├── 📄 AI_CONTEXT.md              # 🧠 Context Map & Rujukan Navigasi Proyek
-├── 📄 README.md                  # 📘 Dokumentasi Repositori
-├── 📄 requirements.txt           # Dependensi Python
-├── 📄 default_yolo.yaml          # Konfigurasi YOLO default
-├── 📄 test_hardware.py           # Script pengujian hardware lokal
-├── 📄 test_rpi_remote.py         # Script pengujian Raspberry Pi jarak jauh (SSH)
+├── switch/                 # The Switch layer (built during the hackathon)
+│   ├── agent/              # qcctl.py (qc-agent's only tool) and CLAUDE.md (its instructions)
+│   ├── gate/               # qc-gate relay, no LLM
+│   ├── setup/              # setup_switch.py: accounts, identities, room, gate policy, agent install
+│   └── demo/images/        # real fish images used by the demo seed
 │
-├── 📂 webdev/                    # 🌐 Aplikasi Web & AI Serving
-│   ├── 📂 backend/               # FastAPI + ONNX Runtime + SQLite + WebSockets
-│   │   ├── 📂 app/               # Logic backend, hardware controller & endpoints
-│   │   └── 📂 models_weights/    # Bobot model ONNX riil
-│   ├── 📂 frontend/              # Next.js 16 + React 19 + Tailwind CSS
-│   └── 📂 eval/                  # Test suite & metrik evaluasi
+├── webdev/                 # FastAPI backend and Next.js dashboard, see webdev/README.md
+│   ├── backend/            # ONNX inference, SQLite records, delivery traceability, Switch room API
+│   ├── frontend/           # dashboard (read-only for decisions)
+│   └── eval/               # model evaluation suite and baseline report
 │
-├── 📂 edge/                      # ⚡ Edge runtime & IoT conveyor actuation
-│   ├── main.py                   # Entrypoint edge controller
-│   ├── inference.py              # Edge inference engine
-│   ├── camera.py                 # Industrial camera handler
-│   ├── gpio.py                   # GPIO pin controller & relay trigger
-│   ├── decision.py               # Sorting decision logic
-│   └── telemetry.py              # Telemetry & status reporting
+├── models/                 # model training (before the hackathon)
+│   ├── model_1/            # freshness classifier, see model_1/README.md
+│   ├── model_2/            # defect detector, see model_2/README.md and ANNOTATION_GUIDE_MODEL2.md
+│   └── datasets/           # local datasets, gitignored
 │
-├── 📂 models/                    # 🤖 Pipeline Machine Learning & Datasets
-│   ├── 📂 model_1/               # Freshness Classification (MobileNetV3)
-│   ├── 📂 model_2/               # Surface Defect Detection (YOLOv8)
-│   └── 📂 datasets/              # 🚫 Git Ignored (Folder penyimpanan lokal dataset)
-│
-└── 📂 AI/                        # 🧠 Artefak & pipeline eksperimen AI
-    ├── 📂 model-1/               # Eksperimen model kesegaran
-    └── 📂 model-2/               # Eksperimen model defek
+├── AI/                     # exported ONNX models (freshness; defects in FP32 and INT8)
+├── edge/                   # Raspberry Pi edge runtime: camera and MJPEG server, inference, GPIO, sorting decision, telemetry
+├── default_yolo.yaml       # default YOLO config
+├── requirements.txt        # Python dependencies for training and edge scripts
+├── run.sh                  # edge node launcher (Raspberry Pi)
+├── test_hardware.py        # local hardware check
+└── test_rpi_remote.py      # Raspberry Pi check over SSH
 ```
 
----
+## Where to start
 
-## 🤖 Menggunakan Context dengan AI
-
-Untuk memfasilitasi integrasi dengan AI assistant, gunakan file [`AI_CONTEXT.md`](AI_CONTEXT.md) di direktori utama.
-
-File tersebut memuat pemetaan tautan langsung ke setiap file penting sesuai dengan tugas yang ingin dikerjakan.
+| To understand | Read |
+|---|---|
+| The Switch room: agent, gate, signing | [`switch/agent/CLAUDE.md`](switch/agent/CLAUDE.md), [`switch/gate/main.py`](switch/gate/main.py), [`webdev/backend/app/services/switchroom_service.py`](webdev/backend/app/services/switchroom_service.py) |
+| The backend and its API | [`webdev/README.md`](webdev/README.md) |
+| Delivery traceability design | [`../docs/designs/nusaqc_delivery_traceability.md`](../docs/designs/nusaqc_delivery_traceability.md) |
+| The models and their measured limits | [`models/model_1/README.md`](models/model_1/README.md), [`models/model_2/README.md`](models/model_2/README.md), [`webdev/eval/BASELINE_EVALUATION_REPORT.md`](webdev/eval/BASELINE_EVALUATION_REPORT.md) |

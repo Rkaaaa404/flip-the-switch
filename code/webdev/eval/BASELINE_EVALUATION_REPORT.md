@@ -1,135 +1,99 @@
-# NusaQC — Laporan Evaluasi Baseline & Analisis Kelemahan Sistem AI
-**Dokumen:** Rekapitulasi Komprehensif Hasil Automated Test Suite (Fase 1 Baseline)  
-**Tanggal Pengujian:** 26 September 2026  
-**Infrastruktur Evaluasi:** `webdev/eval/` (ONNX Runtime CPU, Standar SNI 2729:2013)  
-**Dataset Evaluasi Penuh:**
-- **Model 1 (Freshness):** `models/datasets/mobilenet/val` (380 citra validasi riil: Grade A, B, C lintas 11 hari penyimpanan es)
-- **Model 2 (Defect Detector):** `models/datasets/yolo8s/valid` (642 citra validasi riil beranotasi: 720 bounding box cacat fisik)
+# NusaQC Baseline Evaluation Report
 
----
+**What:** results of the automated test suite, phase 1 baseline
+**Run on:** 26 September 2026, before the hackathon
+**Harness:** `code/webdev/eval/` (ONNX Runtime on CPU, SNI 2729:2013 grades). Run everything with `python run_all.py`. Raw results are in `results/*.json`.
+**Data:**
+- **Model 1 (freshness):** `models/datasets/mobilenet/val`, 380 real validation images, grades A, B and C across 11 days on ice
+- **Model 2 (defects):** `models/datasets/yolo8s/valid`, 642 real annotated validation images with 720 defect boxes
 
-## 1. Executive Summary
+> **Read the freshness score with care.** [`code/models/model_1/README.md`](../../models/model_1/README.md) shows that splits sharing DaFiF sessions inflate accuracy to about 99%. The grouped-by-day split (75.75% accuracy, 84.6% Grade C recall) is the realistic estimate. This report is the evaluation of the vision models only. The Receiving QC Room treats their output as a screen that a named person reviews.
 
-Pengujian baseline komprehensif telah dieksekusi menggunakan seluruh data uji validasi riil tanpa sampling artifisial. Pengujian mencakup 6 suite pengujian (*Core Accuracy*, *Optical Robustness*, *Edge Cases*, *Agentic Adjudication*, *Async Stream*, dan *Quantization Profile*).
+## 1. Summary
 
-Hasil pengujian menunjukkan bahwa **Model 1 (MobileNetV3)** memiliki akurasi nominal sempurna pada kondisi ideal, namun sangat rentan terhadap degradasi lingkungan. Sebaliknya, **Model 2 (YOLOv8s FP32)** menunjukkan **tingkat ketidakterdeteksian cacat (False Negative Rate) yang sangat tinggi (46.39%)** dan **latensi inferensi yang terlalu lambat untuk chip Edge (ARM Cortex-A72)**. Temuan-temuan empiris ini menjadi baseline resmi dan justifikasi teknis untuk pengembangan perbaikan di **Fase 2 (Iteration)**.
+The suite has six parts: core accuracy, optical robustness, edge cases, agentic adjudication, async streaming and quantization. It ran on the full validation sets, without sampling.
 
----
+- **Model 1 (MobileNetV3)** is perfect on this validation folder under good conditions, but degrades badly in poor light and with motion blur.
+- **Model 2 (YOLOv8s FP32)** misses many defects (false negative rate **46.39%**), and is too slow in FP32 for an ARM Cortex-A72 edge CPU.
 
-## 2. Tabel Rekapitulasi Skor Baseline (Master Scorecard)
+These results are the baseline that justified the phase 2 work.
 
-| No | Skrip Test Suite | Dimensi Evaluasi | Metrik Kunci Baseline | Status / Catatan Lapangan |
-| :-: | :--- | :--- | :--- | :--- |
-| **1** | `test_core_accuracy.py` | Akurasi Freshness (MobileNetV3) & Deteksi Cacat (YOLOv8s) | **Freshness F1: 100.0%**<br>**Defect Recall: 53.61%**<br>**Defect FNR: 46.39%**<br>**Defect Precision: 89.56%**<br>**Defect mAP@50: 50.41%** | 380 citra kesegaran terklasifikasi sempurna.<br>**Kelemahan Kritis:** 334 dari 720 cacat fisik lolos deteksi pada YOLO awal. |
-| **2** | `test_optical_robustness.py` | Ketahanan Optik (Wet Glare, Low-Light <50 lux, Blur >15 cm/s) | **Wet Glare FAR: 0.00%**<br>**Low-Light F1: 41.58%**<br>**Blur Recall Retain: 40.00%** | Sangat tahan refleksi kilau lendir/air.<br>**Kelemahan Kritis:** Akurasi anjlok drastis pada cahaya redup dan konveyor cepat. |
-| **3** | `test_edge_cases.py` | Kasus Batas (Empty Belt, OOD Anomaly, Oklusi Fisik) | **Phantom Defect: 0.00%**<br>**OOD Conf Drop: 34.92%**<br>**Oklusi >50% Recall: 28.00%** | Sabuk kosong 100% bersih tanpa deteksi palsu.<br>**Kelemahan Kritis:** Oklusi fisik >50% menjadi *blind spot* kamera tunggal. |
-| **4** | `test_agentic_adjudication.py` | Resolusi Kasus CONDITIONAL (VLM Review & Fallback) | **Resolusi: 100.0%**<br>**Akurasi vs Pakar: 86.00%**<br>**Fallback Success: 100.0%**<br>**Latensi VLM: 1.19 s** | Kasus ambigu terselesaikan otomatis tanpa stop line; fallback graceful ke operator 100% aman. Terdapat 14% selisih opini dengan pakar QC. |
-| **5** | `test_async_stream.py` | Beban Aliran Streaming & Stabilitas RAM | **Throughput: 4.40 FPS**<br>**RAM Growth: 2.59 MB/min**<br>**Frame Drop: 0.00%** | Pipeline asinkronus stabil tanpa *memory leak*, namun throughput CPU host masih di bawah target konveyor (10 FPS). |
-| **6** | `test_quantization_performance.py` | Profiling Model FP32 Baseline & Kesiapan Edge | **Ukuran Model: 42.68 MB**<br>**Host CPU Latency: 226.83 ms**<br>**Edge Projection: 1.315 ms (0.76 FPS)**<br>**Status INT8: PENDING FASE 2** | Model FP32 terlalu berat untuk Raspberry Pi 4.<br>**Kelemahan Kritis:** Bottleneck latensi mewajibkan kuantisasi INT8 di Fase 2. |
+## 2. Scorecard
 
----
+| # | Script | What it measures | Key baseline numbers | Notes |
+|---|---|---|---|---|
+| 1 | `test_core_accuracy.py` | Freshness accuracy and defect detection | Freshness F1 **100.0%**; defect recall **53.61%**, FNR **46.39%**, precision **89.56%**, mAP@50 **50.41%** | All 380 freshness images correct. **Critical:** 334 of 720 defects missed |
+| 2 | `test_optical_robustness.py` | Wet glare, low light (<50 lux), blur (>15 cm/s) | Glare false alarms **0.00%**; low-light F1 **41.58%**; blur recall retained **40.00%** | Robust to water and mucus glare. **Critical:** collapses in dim light and on a fast belt |
+| 3 | `test_edge_cases.py` | Empty belt, out-of-distribution input, occlusion | Phantom defects **0.00%**; OOD confidence drop **34.92%**; recall at >50% occlusion **28.00%** | Empty belt is clean. **Critical:** heavy occlusion is a blind spot for a single camera |
+| 4 | `test_agentic_adjudication.py` | Resolving CONDITIONAL cases (VLM review with fallback) | Resolved **100.0%**; agreement with experts **86.00%**; fallback **100.0%**; VLM latency **1.19 s** | Borderline cases resolve without stopping the line; fallback to the operator always works. 14% disagreement with QC experts |
+| 5 | `test_async_stream.py` | Streaming load and memory | **4.40 FPS**; RAM growth **2.59 MB/min**; frame drops **0.00%** | Stable, no memory leak, but below the 10 FPS conveyor target |
+| 6 | `test_quantization_performance.py` | FP32 size and edge readiness | **42.68 MB**; host latency **226.83 ms**; projected edge latency **1,315 ms (0.76 FPS)**; INT8 pending | FP32 is too heavy for a Raspberry Pi 4. **Critical:** INT8 quantization needed in phase 2 |
 
-## 3. Rincian Metrik Evaluasi Kuantitatif
+## 3. Detailed metrics
 
-### A. Model 1: Freshness Classifier (MobileNetV3-Small FP32)
-- **Total Sampel Validasi:** 380 citra
-- **Overall Accuracy:** 100.0% | **Macro Precision:** 100.0% | **Macro Recall:** 100.0% | **Macro F1:** 100.0%
-- **Rata-rata Latensi Host CPU:** 5.39 ms/frame
-- **Breakdown per Grade SNI 2729:2013:**
-  - `Grade_A` (Day 1–2): Precision 100.0%, Recall 100.0%, F1 100.0% (Support: 60 citra)
-  - `Grade_B` (Day 3–6): Precision 100.0%, Recall 100.0%, F1 100.0% (Support: 141 citra)
-  - `Grade_C` (Day 7–11): Precision 100.0%, Recall 100.0%, F1 100.0% (Support: 179 citra)
-- **Safety Critical Metric:**
-  - Fatal Misclassification (`True Grade C` diprediksi sebagai `Grade A`): **0 kejadian** (*Critical Escape Rate = 0.00%*).
+### Model 1: freshness classifier (MobileNetV3-Small FP32)
 
-### B. Model 2: Defect Detector (YOLOv8s FP32 Native)
-- **Total Citra Validasi:** 642 citra (720 anotasi ground-truth bounding box)
-- **Overall Precision:** 89.56%
-- **Overall Recall:** 53.61%
-- **False Negative Rate (FNR):** **46.39%**
-- **False Alarm Rate (FAR):** 10.44%
-- **mAP@50 Defect:** 50.41%
-- **Rata-rata Latensi Host CPU:** 255.34 ms/frame (~3.9 FPS)
-- **Breakdown Deteksi per Kelas Cacat:**
-  | Kelas Cacat | True Positives (TP) | False Positives (FP) | False Negatives (FN) | Precision | Catatan Pola Kegagalan |
-  | :--- | :---: | :---: | :---: | :---: | :--- |
-  | `sisik_sisa` | 51 | 9 | - | 85.0% | Sering terlewat jika sisik tipis/transparan |
-  | `warna_abnormal` | 229 | 8 | - | 96.6% | Deteksi stabil pada memar/bercak kemerahan luas |
-  | `luka_robekan` | 45 | 8 | - | 84.9% | Terlewat pada robekan sempit (<15 px) |
-  | `lendir_berlebih` | 61 | 20 | - | 75.3% | Terbanyak menghasilkan False Alarm akibat pantulan air |
+- 380 validation images. Accuracy, macro precision, macro recall and macro F1 are all 100.0%.
+- Mean host CPU latency: 5.39 ms per frame.
+- Per grade (SNI 2729:2013), all at 100% precision and recall: Grade A (days 1 to 2, 60 images), Grade B (days 3 to 6, 141 images), Grade C (days 7 to 11, 179 images).
+- **Safety-critical:** Grade C predicted as Grade A: **0 cases**.
 
----
+### Model 2: defect detector (YOLOv8s FP32)
 
-## 4. Daftar 6 Kelemahan AI yang Ditemukan (Baseline Failure Modes)
+- 642 validation images with 720 ground-truth boxes.
+- Precision 89.56%, recall 53.61%, **false negative rate 46.39%**, false alarm rate 10.44%, mAP@50 50.41%.
+- Mean host CPU latency: 255.34 ms per frame (about 3.9 FPS).
 
-Berdasarkan hasil pengujian empiris di atas, berikut adalah 6 kelemahan utama sistem AI NusaQC saat ini:
+| Class | TP | FP | Precision | Failure pattern |
+|---|---|---|---|---|
+| `sisik_sisa` (scale damage) | 51 | 9 | 85.0% | Often missed when scales are thin or translucent |
+| `warna_abnormal` (red lesion) | 229 | 8 | 96.6% | Stable on large bruises and red patches |
+| `luka_robekan` (open wound) | 45 | 8 | 84.9% | Misses narrow tears (<15 px) |
+| `lendir_berlebih` (excess mucus) | 61 | 20 | 75.3% | Most false alarms, from water reflections |
 
-### 🔴 Kelemahan 1: Tingginya False Negative Rate Defek (FNR 46.39% / Recall 53.61%)
-- **Fakta Evaluasi:** Dari 720 kecacatan fisik nyata pada 642 citra validasi, **334 cacat fisik gagal dideteksi (lolos)** oleh model YOLOv8s.
-- **Akar Masalah:**
-  1. Model dilatih dengan Loss Cross-Entropy standar tanpa pembobotan kelas minoritas (*class imbalance*).
-  2. Bounding box cacat mikro (<20 piksel) kehilangan resolusi fitur spasial pada pooling layer backbone CSPDarknet.
-- **Dampak Industri:** Ikan dengan luka robekan atau sisik sisa berisiko lolos ke kontainer ekspor, memicu penalti *quality rejection* di UPI/pasar tujuan.
+## 4. Six weaknesses found
 
-### 🔴 Kelemahan 2: Bottleneck Latensi & Ukuran Model FP32 pada Edge CPU (0.76 FPS)
-- **Fakta Evaluasi:** Bobot YOLOv8s FP32 berukuran **42.68 MB**. Latensi eksekusi di Host CPU mencapai **226.83 ms – 255.34 ms** (~4 FPS), dan pada prosesor Edge ARM Cortex-A72 (Raspberry Pi 4) diproyeksikan mencapai **1.315 ms (0.76 FPS)**.
-- **Akar Masalah:** Format FP32 melakukan kalkulasi floating-point 32-bit penuh yang membebani ALU CPU tanpa akselerator NPU/GPU terpisah.
-- **Dampak Industri:** Pada kecepatan konveyor standar (15 cm/s), kamera menangkap 10 frame/detik. Throughput 0.76 FPS akan menyebabkan antrean frame *overflow* dan sistem tertinggal hingga 5–10 detik.
+### 🔴 1. Many missed defects (FNR 46.39%, recall 53.61%)
 
-### 🔴 Kelemahan 3: Kolaps Akurasi Kesegaran pada Pencahayaan Redup (<50 Lux)
-- **Fakta Evaluasi:** Pada skenario redup / tertutup bayangan operator, skor **Macro F1 MobileNetV3 anjlok dari 100.0% menjadi 41.58%** (penurunan performa -58.42%).
-- **Akar Masalah:** Distribusi histogram piksel menyempit ke area gelap. Model mengandalkan fitur visual warna insang dan kornea mata yang kehilangan kontras kromatik saat kekurangan lux pencahayaan.
-- **Dampak Industri:** Fluktuasi pencahayaan di area sortasi pabrik dapat menyebabkan ikan segar Grade A salah dinilai sebagai Grade B atau C.
+- **Finding:** of 720 real defects in 642 images, **334 were missed**.
+- **Causes:** standard cross-entropy with no weighting for minority classes; tiny defects (<20 px) lose spatial detail in the CSPDarknet backbone's pooling layers.
+- **Impact:** fish with tears or scale damage could reach an export container and trigger a quality rejection.
 
-### 🟡 Kelemahan 4: Penurunan Drastis Retensi Deteksi Akibat Motion Blur (>15 cm/s)
-- **Fakta Evaluasi:** Ketika konveyor bergerak cepat (>15 cm/s) sehingga menimbulkan motion blur linier, *Recall Retain Rate* defek merosot ke **40.00%**, dan Freshness Macro F1 turun ke **67.29%**.
-- **Akar Masalah:** Blur linier mengaburkan gradien tepi (*edge boundaries*) luka robekan dan sisik sisa, menyebabkan skor confidence deteksi jatuh di bawah ambang batas operasional (0.55).
+### 🔴 2. FP32 latency and size on an edge CPU (0.76 FPS)
 
-### 🟡 Kelemahan 5: Blind Spot Fisik Akibat Oklusi Berat (>50% Tumpukan Ikan)
-- **Fakta Evaluasi:** Ketika ikan berada dalam posisi bertumpuk dengan luas permukaan tertutup >50%, *Defect Recall* anjlok menjadi **28.00%** (kehilangan -52.0% sensitivitas).
-- **Akar Masalah:** Keterbatasan fisik perspektif kamera tunggal 2D (*single top-down viewpoint*) yang tidak dapat melihat sisi bawah atau area yang tertindih fisik oleh ikan lain.
+- **Finding:** the FP32 YOLOv8s weights are **42.68 MB**. Host latency is **226.83 to 255.34 ms** (about 4 FPS). On a Raspberry Pi 4 (ARM Cortex-A72) the projection is **1,315 ms per frame (0.76 FPS)**.
+- **Cause:** full 32-bit floating point on a CPU with no NPU or GPU.
+- **Impact:** at a standard belt speed of 15 cm/s the camera produces 10 frames per second. At 0.76 FPS the frame queue overflows and the system falls 5 to 10 seconds behind.
 
-### 🟡 Kelemahan 6: False Alarm pada Lendir Berlebih & Deviasi Opini AI Agent (14%)
-- **Fakta Evaluasi:**
-  - Deteksi `lendir_berlebih` menyumbang False Positive tertinggi (20 FP dari 81 prediksi, precision 75.3%) karena pantulan air/es basah terkadang disalahartikan sebagai lendir abnormal.
-  - Pada kasus ambigu/borderline yang diserahkan ke VLM Agent (`test_agentic_adjudication.py`), terdapat **14.0% ketidaksesuaian keputusan** antara AI Agent dengan pakar QC manusia.
+### 🔴 3. Freshness accuracy collapses in dim light (<50 lux)
 
----
+- **Finding:** in dim light or under an operator's shadow, MobileNetV3's **macro F1 drops from 100.0% to 41.58%**.
+- **Cause:** the pixel histogram squeezes into the dark range, and the gill and eye colors the model relies on lose contrast.
+- **Impact:** changing light on the sorting floor can grade a Grade A fish as B or C.
 
-## 5. Rencana Aksi Pengembangan & Iterasi (Fase 2 Roadmap)
+### 🟡 4. Motion blur cuts detection (>15 cm/s)
 
-Berdasarkan 6 kelemahan empiris di atas, berikut adalah agenda perbaikan terarah untuk Fase 2:
+- **Finding:** with linear motion blur from a fast belt, defect recall retained drops to **40.00%** and freshness macro F1 to **67.29%**.
+- **Cause:** blur smears the edges of tears and scale damage, so confidence falls below the operating threshold (0.55).
 
-```text
-               ┌────────────────────────────────────────────────────────┐
-               │         TEMUAN EVALUASI BASELINE (FASE 1)              │
-               │  - Defect FNR: 46.39%        - Edge Latency: 1.315 ms  │
-               │  - Low-Light F1: 41.58%      - Blur Retain: 40.00%     │
-               └──────────────────────────┬─────────────────────────────┘
-                                          │
-                  ┌───────────────────────┴───────────────────────┐
-                  ▼                                               ▼
-     [ PERBAIKAN MODEL 1 (FRESHNESS) ]             [ PERBAIKAN MODEL 2 (DEFECT) ]
-     1. Preprocessing CLAHE Adaptive               1. Retraining dengan Weighted / Focal Loss
-        (Kompensasi redup <50 lux)                    (Target Recall >= 75%, FNR <= 25%)
-     2. Motion-Blur Training Augmentation          2. Multi-Scale Augmentation (Mosaic + Copy-Paste)
-        (Kompensasi blur konveyor cepat)              (Deteksi cacat mikro <20 px)
-                  │                                               │
-                  └───────────────────────┬───────────────────────┘
-                                          │
-                                          ▼
-                         [ OPTIMASI EDGE INFERENCE ]
-                         1. Dynamic INT8 Quantization (quantize_dynamic)
-                            - Target Ukuran: 42.7 MB -> ~10.8 MB (-74%)
-                            - Target Throughput Edge RPi 4: 0.76 FPS -> > 2.5 FPS
-                         2. Adaptive Threshold Calibration
-                            - IoU 0.45 & Confidence 0.50 tuning (tekan FAR lendir)
-```
+### 🟡 5. Blind spot under heavy occlusion (>50% overlap)
 
-| Prioritas | Program Pengembangan | Target Metrik Pasca-Iterasi | Metode Implementasi |
-| :-: | :--- | :--- | :--- |
-| **P1** | **Retraining YOLOv8s dengan Focal Loss & Weighted BBox** | Defect Recall: **$\ge 75\%$**<br>Defect FNR: **$\le 25\%$** (turun dari 46.39%) | Terapkan loss berbobot pada kelas luka robekan dan sisik sisa; tambahkan augmentasi *Copy-Paste* cacat mikro. |
-| **P2** | **Kuantisasi Dinamis INT8 Model Defect** | Ukuran: **$\sim 10.8\text{ MB}$**<br>Host Latency: **$<80\text{ ms}$**<br>Edge Throughput: **$>2.5\text{ FPS}$** | Gunakan `onnxruntime.quantization.quantize_dynamic` dengan tipe `QuantType.QUInt8`. |
-| **P3** | **Adaptive CLAHE Preprocessing Pipeline** | Low-Light Macro F1: **$\ge 70\%$** (naik dari 41.58%) | Sisipkan *Contrast Limited Adaptive Histogram Equalization* pada kanal Luminansi (Y) sebelum inferensi MobileNetV3. |
-| **P4** | **Synthetic Motion Blur & Glare Augmentation** | Blur Recall Retain: **$\ge 65\%$** (naik dari 40.00%) | Latih ulang model dengan injeksi filter kernel blur linier konveyor (15–20 cm/s). |
-| **P5** | **Mitigasi Oklusi Fisik & Integrasi Hardware Diverter** | Penanganan Kasus Oklusi: **100% dialihkan** | Tandai citra dengan oklusi >50% sebagai `CONDITIONAL` dan picu sinyal GPIO actuator untuk memisahkan ikan ke jalur re-orientasi. |
+- **Finding:** when more than half of a fish is covered by others, defect recall drops to **28.00%**.
+- **Cause:** a single top-down 2D camera can't see the underside or covered areas. (The delivery traceability feature added during the hackathon captures a second, ventral view of each fish for this reason.)
+
+### 🟡 6. Mucus false alarms and AI agent disagreement (14%)
+
+- `lendir_berlebih` has the most false positives (20 of 81 predictions, precision 75.3%): wet ice and water reflections are read as abnormal mucus.
+- On borderline cases sent to the VLM agent (`test_agentic_adjudication.py`), the agent disagreed with human QC experts **14.0%** of the time.
+
+## 5. Phase 2 plan
+
+| Priority | Work | Target | Method |
+|---|---|---|---|
+| P1 | Retrain YOLOv8s with focal loss and weighted boxes | Recall **≥ 75%**, FNR **≤ 25%** (from 46.39%) | Weighted loss on open wound and scale damage; copy-paste augmentation of tiny defects |
+| P2 | Dynamic INT8 quantization of the defect model | **~10.8 MB**, host latency **< 80 ms**, edge **> 2.5 FPS** | `onnxruntime.quantization.quantize_dynamic` with `QuantType.QUInt8` (done: `code/models/model_2/quantize_int8.py`, 11.5 MB) |
+| P3 | Adaptive CLAHE preprocessing | Low-light macro F1 **≥ 70%** (from 41.58%) | Contrast-limited adaptive histogram equalization on the luminance channel before MobileNetV3 |
+| P4 | Synthetic motion-blur and glare augmentation | Blur recall retained **≥ 65%** (from 40.00%) | Retrain with linear blur kernels for 15 to 20 cm/s belts |
+| P5 | Occlusion handling with a hardware diverter | **100%** of occluded cases diverted | Mark >50% occlusion as `CONDITIONAL` and trigger a GPIO diverter to a re-orientation lane |
+
+Also planned: IoU 0.45 and confidence 0.50 threshold tuning, to cut mucus false alarms.
