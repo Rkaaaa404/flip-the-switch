@@ -7,6 +7,23 @@ import {
   StorageSlot,
   DispatchRecord,
 } from "@/types";
+import type {
+  Delivery,
+  DeliveryCreate,
+  DeliveryDetail,
+  DeliveryListResponse,
+  DeliveryStatus,
+  DeliveryTraceTree,
+  FishInspection,
+  HumanDisposition,
+  HumanDispositionCreate,
+  LotProvenance,
+  MaterialMovement,
+  MaterialMovementCreate,
+  SimulateRequest,
+  ViewSide,
+  RecordProposal,
+} from "@/types/delivery";
 
 export const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
@@ -263,4 +280,133 @@ export async function updateDispatchStatus(dispatchId: string, status: "pending"
   });
   if (!res.ok) throw new Error(`Failed to update dispatch status to ${status}`);
   return res.json();
+}
+
+// ----------------------------------------------------
+// DELIVERY TRACEABILITY API METHODS
+// ----------------------------------------------------
+
+async function deliveryRequest<T>(path: string, init?: RequestInit): Promise<T> {
+  const res = await fetch(`${API_BASE}/api/v1/deliveries${path}`, init);
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ detail: res.statusText }));
+    const detail = Array.isArray(err.detail)
+      ? err.detail.map((d: { msg: string }) => d.msg).join("; ")
+      : err.detail;
+    throw new Error(detail || `Delivery request failed (${res.status})`);
+  }
+  return res.json();
+}
+
+function jsonInit(method: string, body: unknown): RequestInit {
+  return {
+    method,
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  };
+}
+
+export function createDelivery(body: DeliveryCreate): Promise<Delivery> {
+  return deliveryRequest<Delivery>("", jsonInit("POST", body));
+}
+
+export function getDeliveries(
+  params: { page?: number; limit?: number; status?: DeliveryStatus } = {}
+): Promise<DeliveryListResponse> {
+  const query = new URLSearchParams();
+  if (params.page !== undefined) query.set("page", params.page.toString());
+  if (params.limit !== undefined) query.set("limit", params.limit.toString());
+  if (params.status !== undefined) query.set("status", params.status);
+  const qs = query.toString();
+  return deliveryRequest<DeliveryListResponse>(qs ? `?${qs}` : "", { cache: "no-store" });
+}
+
+export function getDeliveryById(
+  id: string,
+  params: { page?: number; limit?: number } = {}
+): Promise<DeliveryDetail> {
+  const query = new URLSearchParams();
+  if (params.page !== undefined) query.set("page", params.page.toString());
+  if (params.limit !== undefined) query.set("limit", params.limit.toString());
+  const qs = query.toString();
+  return deliveryRequest<DeliveryDetail>(
+    `/${encodeURIComponent(id)}${qs ? `?${qs}` : ""}`,
+    { cache: "no-store" }
+  );
+}
+
+export function updateDeliveryStatus(
+  id: string,
+  status: "inspection_complete" | "closed"
+): Promise<Delivery> {
+  return deliveryRequest<Delivery>(
+    `/${encodeURIComponent(id)}/status`,
+    jsonInit("PATCH", { status })
+  );
+}
+
+export function captureView(
+  id: string,
+  viewSide: ViewSide,
+  image: File | Blob,
+  sequenceInDelivery?: number
+): Promise<FishInspection> {
+  const formData = new FormData();
+  formData.append("image", image);
+  formData.append("view_side", viewSide);
+  if (sequenceInDelivery !== undefined) {
+    formData.append("sequence_in_delivery", sequenceInDelivery.toString());
+  }
+  return deliveryRequest<FishInspection>(`/${encodeURIComponent(id)}/capture-view`, {
+    method: "POST",
+    body: formData,
+  });
+}
+
+export function simulateConveyor(
+  id: string,
+  body: SimulateRequest = {}
+): Promise<{ status: string; delivery_id: string; count: number }> {
+  return deliveryRequest(`/${encodeURIComponent(id)}/simulate`, jsonInit("POST", body));
+}
+
+export function recordDisposition(
+  id: string,
+  body: HumanDispositionCreate
+): Promise<HumanDisposition> {
+  return deliveryRequest<HumanDisposition>(
+    `/${encodeURIComponent(id)}/dispositions`,
+    jsonInit("POST", body)
+  );
+}
+
+export function recordMovement(
+  id: string,
+  body: MaterialMovementCreate
+): Promise<MaterialMovement> {
+  return deliveryRequest<MaterialMovement>(
+    `/${encodeURIComponent(id)}/movements`,
+    jsonInit("POST", body)
+  );
+}
+
+export async function getProposals(deliveryId: string): Promise<RecordProposal[]> {
+  const res = await fetch(
+    `${API_BASE}/api/v1/switchroom/proposals?delivery_id=${encodeURIComponent(deliveryId)}`,
+    { cache: "no-store" }
+  );
+  if (!res.ok) throw new Error(`Failed to load Switch proposals (${res.status})`);
+  return res.json();
+}
+
+export function getDeliveryTrace(id: string): Promise<DeliveryTraceTree> {
+  return deliveryRequest<DeliveryTraceTree>(`/${encodeURIComponent(id)}/trace`, {
+    cache: "no-store",
+  });
+}
+
+export function getLotProvenance(lotId: string): Promise<LotProvenance> {
+  return deliveryRequest<LotProvenance>(`/lots/${encodeURIComponent(lotId)}/provenance`, {
+    cache: "no-store",
+  });
 }

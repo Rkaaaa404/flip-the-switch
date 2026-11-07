@@ -45,7 +45,9 @@ The system must close these gaps without requiring individual-fish tracking hard
 *   Replacing production planning (PPIC), purchasing or accounting systems.
 *   Handheld or supplier-side inspection hardware.
 *   Claiming or projecting specific financial savings.
-*   Recall Room or Switch workflow design.
+*   Recall Room containment (holds, dispatch blocks).
+
+> **Changed 2026-11-07.** Switch workflow design was a non-goal. It is now the write path for every disposition and movement: see *Signing through Switch* under Non-Functional Requirements and `docs/plans/2026-11-07_switch-integration-plan.md`.
 
 ## Open Questions
 
@@ -54,7 +56,16 @@ The system must close these gaps without requiring individual-fish tracking hard
 *   **Q3 — Decision authority:** Which role in the factory (QC supervisor, PPIC manager, or another) holds the authority to record an acceptance, rejection, downgrade or reprocessing decision? Is this different for different defect types?
 *   **Q4 — Quantity units:** Does the factory measure receiving quantities in fish count, weight, or both? What unit governs supplier agreements and loss calculations?
 *   **Q5 — Existing records:** Can the original `nusaqc.db` inspection records be retained as historical observations without being promoted to receiving-linked, quantity-bearing records? Or must they be migrated?
-*   **Q6 — Deployed model labels:** What are the exact defect labels the current YOLOv8s model detects? This determines what findings the system can honestly report.
+*   **Q6 — Deployed model labels (resolved 2026-11-07):** The deployed YOLOv8s detector (`code/webdev/backend/models_weights/nusaqc_model2_defect_detector.onnx`) emits exactly four classes, defined in `code/models/model_2/ANNOTATION_GUIDE_MODEL2.md` and mapped in `ALL_DEFECT_CLASSES` (`code/webdev/backend/app/ai/inference.py`). The system reports only these labels:
+
+    | ID | Label | Covers |
+    |:--:|---|---|
+    | 0 | `sisik_sisa` | Attached parasites, parasite spots, lifted or rough scales |
+    | 1 | `warna_abnormal` | Red lesions, skin hemorrhage, Aeromoniasis patches, gill inflammation |
+    | 2 | `luka_robekan` | Open ulcers, torn fins or tail (fin rot), Saprolegniasis fungus |
+    | 3 | `lendir_berlebih` | Thick cloudy mucus, White Tail Disease, excess white mucus |
+
+    A healthy fish has no boxes. Where an open wound overlaps redness, `luka_robekan` takes priority. *Remaining sub-question:* a spot check on 2026-11-07 found open ulcers predicted, and in at least one case pseudo-labelled (`hf_00811`), as `warna_abnormal`. The current weights cannot yet be relied on to separate ulcers from red lesions.
 *   **Q7 — Retention and backup:** What retention period applies to inspection photographs? Who owns the backup and recovery process, and where is the backup stored?
 
 ## Critical User Journeys (CUJs)
@@ -155,7 +166,7 @@ The SQLite schema is expanded with five purpose-built tables that leave legacy i
    * `sequence_in_delivery` (`INTEGER` NOT NULL): 1-indexed sequential counter within delivery.
    * `status` (`VARCHAR(32)` NOT NULL): `COMPLETE` (both views captured), `PARTIAL_DORSAL_ONLY`, `PARTIAL_VENTRAL_ONLY`, `FAILED_CAPTURE`.
    * `flagged_for_review` (`BOOLEAN` NOT NULL DEFAULT FALSE): Set true if either view has grade C or any detected defect.
-   * `flag_reasons_json` (`TEXT` NULL): Array of detected defect classes (e.g. `["ulcer", "scale_loss"]`).
+   * `flag_reasons_json` (`TEXT` NULL): Array of detected defect classes from the Q6 label set (e.g. `["luka_robekan", "sisik_sisa"]`).
    * `created_at` (`DATETIME` NOT NULL).
 
 3. **`inspection_views`**: Stores evidence and model observations per side.
@@ -166,7 +177,7 @@ The SQLite schema is expanded with five purpose-built tables that leave legacy i
    * `sha256` (`CHAR(64)` NOT NULL): Integrity checksum of stored image artifact.
    * `freshness_grade` (`VARCHAR(16)` NOT NULL): `A`, `B`, `C`, or `UNSUPPORTED`.
    * `freshness_confidence` (`FLOAT` NOT NULL): Model confidence score ($0.0 - 1.0$).
-   * `defects_detected_json` (`TEXT` NOT NULL): Serialized array of `{label, confidence, bounding_box: [x1, y1, x2, y2]}`.
+   * `defects_detected_json` (`TEXT` NOT NULL): Serialized array of `{label, confidence, bbox: [x1, y1, x2, y2]}`, where `label` is one of the four Q6 classes and `bbox` is in source-image pixels.
    * `inference_mode` (`VARCHAR(32)` NOT NULL): `real_onnx` or `simulated_mock`.
    * `inference_latency_ms` (`INTEGER` NOT NULL): Processing latency in milliseconds.
    * `created_at` (`DATETIME` NOT NULL).
@@ -226,14 +237,20 @@ The SQLite schema is expanded with five purpose-built tables that leave legacy i
 * `GET /api/v1/deliveries`: List deliveries with summary counts (total inspected, flagged count, partial count, current status).
 * `GET /api/v1/deliveries/{id}`: Detailed delivery view with paginated inspection sequence list, flags, views, dispositions, and movements.
 * `POST /api/v1/deliveries/{id}/capture-view`: Internal hardware/trigger endpoint for camera image upload and sequential processing.
-* `POST /api/v1/deliveries/{id}/dispositions`: Record human QC disposition. Request body: `{output_lot_id, disposition, affected_quantity, quantity_unit, decision_reason, authorized_by}`.
-* `POST /api/v1/deliveries/{id}/movements`: Record material handoff/transformation. Request body: `{input_ref, output_lot_id, stage, quantity_in, quantity_out, quantity_unit, normal_yield_loss, qc_reject_loss, unexplained_variance, operator_id, notes}`.
+* `POST /api/v1/deliveries/{id}/dispositions`: Record human QC disposition (**gate token only**; see NFR 1). Request body: `{output_lot_id, disposition, affected_quantity, quantity_unit, decision_reason, authorized_by}`.
+* `POST /api/v1/deliveries/{id}/movements`: Record material handoff/transformation (**gate token only**). Request body: `{input_ref, output_lot_id, stage, quantity_in, quantity_out, quantity_unit, normal_yield_loss, qc_reject_loss, unexplained_variance, operator_id, notes}`.
 * `GET /api/v1/deliveries/{id}/trace`: Return the complete end-to-end lineage tree from delivery intake through storage slots and export dispatches, explicitly returning an array of `missing_links` where data gaps exist.
 
 ### Non-Functional Requirements
 
 #### 1. Security & Attributability
 * Every disposition and material movement record requires an authenticated `authorized_by` or `operator_id`.
+* **Signing through Switch.** The only write path is the Switch room `receiving-qc`:
+  1. `qc-agent` drafts a proposal (`POST /api/v1/switchroom/proposals`, agent token: read and draft only). Drafts are validated against the same quantity rules as records.
+  2. A person types `@qc-gate approve DP-n` / `confirm MV-n` (or `reject … <reason>`). Switch's addressing policy on `qc-gate` admits plant users in the room and no agents.
+  3. `qc-gate` relays the text with the **sender id Switch issued** to `POST /api/v1/switchroom/gate/commands` (gate token).
+  4. The API maps the sender to a role in `switch_identities` (approve/reject DP: `qc_supervisor`; confirm/reject MV: `floor_operator` or `qc_supervisor`), refuses a replayed `switch_message_id`, re-validates and applies in one commit. `authorized_by` / `operator_id` is the mapped username, never typed text, and the record stores `authorized_via = "switch_gate"` and `switch_message_id`.
+* The direct `POST …/dispositions` and `…/movements` routes require the gate token and return 403 otherwise. Empty tokens fail closed.
 * Image artifacts are append-only. Deletion of historical inspection images is disabled while referenced by an open delivery, disposition, or dispatch record.
 * SHA-256 checksums are verified on image read to detect filesystem corruption.
 
@@ -448,7 +465,7 @@ uv run pytest backend/tests/test_delivery_traceability.py backend/tests/test_mat
 #### 4. Manual End-to-End Smoke Scenario
 1. Launch backend and frontend using `docker compose up --build`.
 2. Navigate to `http://localhost:3000/deliveries` and create delivery `DEL-20261107-001` (Supplier: PT Samudra Bitung, Species: Tilapia, Family: Cichlidae, Stated: 500 kg).
-3. Trigger 5 mock fish inspections with Mock Controller (including 1 partial capture and 1 ulcer-flagged fish).
+3. Trigger 5 mock fish inspections with the Mock Controller, including 1 partial capture (`drop_ventral_every`). The simulator cannot inject defects, so add one defect fish by hand: upload `code/models/datasets/model-2/nusaqc_extended_pseudo_dataset/train/images/hf_00811.jpg` as its dorsal view through `POST /api/v1/deliveries/{id}/capture-view`, then upload a ventral view with that fish's `sequence_in_delivery` (operator-assisted pairing) so the inspection is `COMPLETE`. Expect it flagged with `warna_abnormal` (≈0.86 confidence on the current weights), not `luka_robekan`; see Q6.
 4. In `http://localhost:3000/deliveries/DEL-20261107-001`, inspect the flagged fish, confirm two views are displayed side-by-side, and submit a human disposition (`ACCEPT` 450 kg, `REPROCESS` 50 kg for trimming).
 5. Record a `processing_wggs` movement and a `processing_fillet` movement, noting normal biological removal.
 6. Open `http://localhost:3000/deliveries/DEL-20261107-001/trace` and verify the complete lineage tree loads in $< 1.0$ second, with all physical handoffs and yield losses clearly displayed.
