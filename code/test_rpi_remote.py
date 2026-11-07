@@ -5,7 +5,7 @@ Jalankan script ini langsung dari Laptop:
   python test_rpi_remote.py
 
 Script ini akan:
-1. Konek ke Raspberry Pi (192.168.137.251) via SSH (user: dti / pass: dti)
+1. Konek ke Raspberry Pi via SSH (dikonfigurasi via environment variable RPI_HOST, RPI_USER, RPI_PASS)
 2. Mentransfer test_hardware.py ke Raspberry Pi
 3. Menjalankan test_hardware.py di Raspberry Pi secara interaktif
 """
@@ -14,9 +14,9 @@ import os
 import sys
 import paramiko
 
-RPI_HOST = "192.168.137.251"
-RPI_USER = "dti"
-RPI_PASS = "dti"
+RPI_HOST = os.getenv("RPI_HOST", "192.168.137.251")
+RPI_USER = os.getenv("RPI_USER", "dti")
+RPI_PASS = os.getenv("RPI_PASS", "")
 
 def main():
     print("=" * 60)

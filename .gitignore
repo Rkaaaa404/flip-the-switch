@@ -6,6 +6,15 @@
 *.env
 !.env.example
 
+# Credentials, Certificates & Keys
+*.pem
+*.key
+*.p12
+*.token
+*.cert
+credentials.json
+service-account*.json
+
 # ==========================================
 # Dependencies & Virtual Environments
 # ==========================================
@@ -84,3 +93,9 @@ ehthumbs.db
 !.vscode/settings.json
 .idea/
 .agents/
+
+# ==========================================
+# Sensitive Documents & Competition Archive
+# ==========================================
+docs/references/
+docs/archive/
